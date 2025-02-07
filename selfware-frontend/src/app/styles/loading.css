@@ -1,0 +1,17 @@
+@keyframes rainbow {
+  0% { background-color: #FF0000; transform: scale(1); }   /* Red */
+  14% { background-color: #FF7F00; transform: scale(0.5); }  /* Orange */
+  28% { background-color: #FFFF00; transform: scale(1); }  /* Yellow */
+  42% { background-color: #00FF00; transform: scale(0.5); }  /* Green */
+  57% { background-color: #0000FF; transform: scale(1); }  /* Blue */
+  71% { background-color: #4B0082; transform: scale(0.5); }  /* Indigo */
+  85% { background-color: #9400D3; transform: scale(1); }  /* Violet */
+  100% { background-color: #FF0000; transform: scale(1); }  /* Back to Red */
+}
+
+.loading-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  animation: rainbow 5s linear infinite; /* 5 seconds loop with linear timing function */
+}

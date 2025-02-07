@@ -5,7 +5,6 @@ import LogoutButton from "./LogoutButton";
 // If you're using React Router, import `useNavigate` from "react-router-dom".
 
 const Navbar: React.FC = () => {
-
   const router = useRouter(); // Next.js router instance
   const userData = localStorage.getItem("DATA:USER");
 
@@ -52,7 +51,9 @@ const Navbar: React.FC = () => {
           {userData ? (
             <LogoutButton />
           ) : (
-            <button className="btn btn-signin">Sign In</button>
+            <button className="btn btn-signin" onClick={() => navigate("/sign_in")}>
+              Sign In
+            </button>
           )}
         </div>
       </div>

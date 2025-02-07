@@ -1,7 +1,10 @@
 "use client";
 
 import GlassWindow from "@/components/GlassWindow";
+import LoadingCircle from "@/components/LoadingCircle";
 import LogoutButton from "@/components/LogoutButton";
+import StarComponent from "@/components/StarComponent";
+import { starProperties } from "@/data/starProperties";
 import UserClass from "@/modules/UserClass";
 import React, { useState, useEffect, useRef } from "react";
 
@@ -146,62 +149,32 @@ export default function StarLifecycle() {
     return () => clearInterval(timer);
   }, [birthDate]);
 
-  // Get star properties based on life percentage
+  // Define the return type of the function
   const getStarProperties = (lifePercentage: number) => {
     if (lifePercentage > 75) {
-      return {
-        name: "I: Protostar",
-        color: "rgba(255, 0, 0, 1)", // Red
-        glow: `rgba(255, 100, 100, ${lifePercentage / 100})`,
-        intensity: 50,
-        size: "100px", // Small
-      };
+      return starProperties[0];
     } else if (lifePercentage > 50) {
-      return {
-        name: "II: Main sequence",
-        color: "rgba(255, 255, 0, 1)", // Yellow
-        glow: `rgba(255, 255, 100, ${lifePercentage / 100})`,
-        intensity: 100,
-        size: "200px", // Medium
-      };
+      return starProperties[1];
     } else if (lifePercentage > 25) {
-      return {
-        name: "III: Red giant",
-        color: "rgba(255, 100, 100, 1)", // Red
-        glow: `rgba(255, 100, 100, ${lifePercentage / 100})`,
-        intensity: 150,
-        size: "400px", // Very large
-      };
+      return starProperties[2];
     } else if (lifePercentage > 1) {
-      return {
-        name: "IV. White dwarf",
-        color: "rgba(200, 200, 255, 1)", // Blue-white
-        glow: `rgba(200, 200, 255, ${lifePercentage / 100})`,
-        intensity: 80,
-        size: "120px", // Small
-      };
+      return starProperties[3];
     } else {
-      return {
-        name: "VI. Black dwarf",
-        color: "rgba(0, 0, 0, 1)", // Black
-        glow: "rgba(100, 100, 100, 1)",
-        intensity: 10,
-        size: "50px", // Smallest
-      };
+      return starProperties[4];
     }
   };
 
-  const starProperties = getStarProperties(lifePercentage);
+  const prop = getStarProperties(lifePercentage);
 
   // Loading screen
   if (isLoading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-black text-white">
+      <div className="h-screen flex flex-col items-center justify-center bg-black text-white">
         <canvas
           ref={canvasRef}
           className="absolute top-0 left-0 w-full h-full"
         ></canvas>
-        <h1 className="text-3xl">Loading...</h1>
+        <LoadingCircle />
       </div>
     );
   }
@@ -218,27 +191,11 @@ export default function StarLifecycle() {
       {/* Main content */}
       <div className="flex flex-col h-screen w-full z-10 items-center justify-center text-center py-32">
         <h1 className="text-6xl font-bold mb-6">Star Lifecycle</h1>
-        <p className="text-lg mb-12">The star has been running {elapsedTime}</p>
-        <div
-          className="mx-auto rounded-full cursor-pointer"
-          onClick={() => setIsWidgetOpen(true)}
-          style={{
-            backgroundColor: starProperties.color,
-            boxShadow: `0 0 ${starProperties.intensity}px ${
-              starProperties.intensity / 2
-            }px ${starProperties.glow}`,
-            width: starProperties.size,
-            height: starProperties.size,
-          }}
-        ></div>
-        <p className="text-3xl mt-12">Current Stage: {starProperties.name}</p>
+        <p className="text-lg mb-8">The star has been running {elapsedTime}</p>
+        <StarComponent lifePercentage={lifePercentage}/>
+        <p className="text-3xl mt-8">Current Stage: {prop.name}</p>
         <p className="mt-4 text-lg">Remaining: {lifePercentage.toFixed(1)}%</p>
       </div>
-      {/* <div className="absolute bottom-0 left-0 z-10">
-        <LogoutButton />
-      </div> */}
-      {/* Widget (Frosted Glass Effect) */}
-      {/* Reusable Widget */}
       <GlassWindow isOpen={isWidgetOpen} onClose={() => setIsWidgetOpen(false)}>
         <h2 className="text-2xl font-bold mb-4">恒星详情</h2>
         <p>这是一个关于恒星生命周期的详细信息窗口。</p>

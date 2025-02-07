@@ -1,0 +1,39 @@
+@keyframes breath {
+  0% {
+    transform: scale(1);
+  }
+
+  /* Red */
+  50% {
+    transform: scale(1.2);
+  }
+
+  /* Orange */
+  100% {
+    transform: scale(1);
+  }
+
+  /* Orange */
+}
+
+.star {
+  transition: background-color 5s ease, width 5s ease, height 5s ease;
+  /* Smooth transition for color and size */
+  border-radius: 50%;
+  /* Make it circular */
+  position: relative;
+  /* To handle glow effect */
+  display: inline-block;
+  /* Allow size adjustments */
+  animation: breath 10s linear infinite; 
+}
+
+.glow {
+  position: absolute;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: opacity 5s ease, background-color 7s ease, width 10s ease, height 10s ease;
+  /* Smooth transition for glow */
+}

@@ -35,6 +35,7 @@ export default function RegisterPage() {
 
       // Create a new User object
       const newUser = new User(
+        '',
         formData.username,
         formData.email,
         hashedPassword,
@@ -66,6 +67,7 @@ export default function RegisterPage() {
           dateOfBirth: '',
           bio: '',
         });
+        window.location.href = "/sign_in";
       } else {
         setMessage(data.error || 'An error occurred!');
       }
@@ -208,7 +210,7 @@ export default function RegisterPage() {
           </button>
           <div className="flex items-center justify-center">
             <span className="mr-2">Already have an account?</span>{" "}
-            <Link href={"/sign_up"}>Login Now</Link>
+            <Link href={"/sign_in"}>Login Now</Link>
           </div>
         </form>
         {message && <p className="mt-4 text-center text-green-400">{message}</p>}
