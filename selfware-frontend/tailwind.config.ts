@@ -9,7 +9,7 @@ export default {
   theme: {
     extend: {
       gridTemplateColumns: {
-        '100': 'repeat(100, minmax(0, 1fr))', // 自定义 13 列
+        '10': 'repeat(10, minmax(0, 1fr))', // 自定义 13 列
       },
       colors: {
         background: "var(--background)",

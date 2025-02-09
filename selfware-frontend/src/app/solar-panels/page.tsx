@@ -1,90 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import dayjs from "dayjs"; // For date manipulation
-
-interface EditableTaskListProps {
-  tasks: Task[];
-  onChange: (tasks: Task[]) => void;
-}
-
-const EditableTaskList: React.FC<EditableTaskListProps> = ({
-  tasks,
-  onChange,
-}) => {
-  const [taskList, setTaskList] = useState<Task[]>(tasks);
-
-  const handleTaskChange = (index: number, newDescription: string) => {
-    const updatedTasks = [...taskList];
-    updatedTasks[index].description = newDescription;
-    setTaskList(updatedTasks);
-    onChange(updatedTasks);
-  };
-
-  const handleAddTask = () => {
-    const newTask: Task = { id: Date.now(), description: "" };
-    const updatedTasks = [...taskList, newTask];
-    setTaskList(updatedTasks);
-    onChange(updatedTasks);
-  };
-
-  const handleDeleteTask = (index: number) => {
-    const updatedTasks = taskList.filter((_, i) => i !== index);
-    setTaskList(updatedTasks);
-    onChange(updatedTasks);
-  };
-
-  return (
-    <div>
-      {taskList.map((task, index) => (
-        <div key={task.id} className="flex items-center mb-2">
-          <input
-            type="text"
-            value={task.description}
-            onChange={(e) => handleTaskChange(index, e.target.value)}
-            className="border p-1 flex-grow mr-2"
-          />
-          <button
-            onClick={() => handleDeleteTask(index)}
-            className="bg-red-500 text-white px-2 py-1 rounded"
-          >
-            Delete
-          </button>
-        </div>
-      ))}
-      <button
-        onClick={handleAddTask}
-        className="bg-blue-500 text-white px-4 py-2 rounded"
-      >
-        Add Task
-      </button>
-    </div>
-  );
-};
-
-interface ReadOnlyTaskListProps {
-  tasks: Task[];
-}
-
-const ReadOnlyTaskList: React.FC<ReadOnlyTaskListProps> = ({ tasks }) => {
-  return (
-    <ul>
-      {tasks.length > 0 ? (
-        tasks.map((task) => (
-          <li key={task.id} className="mb-1">
-            - {task.description}
-          </li>
-        ))
-      ) : (
-        <p>No tasks for this date.</p>
-      )}
-    </ul>
-  );
-};
-
-interface Task {
-  id: number;
-  description: string;
-}
+import UserClass from "@/modules/UserClass";
+import LoadingCircle from "@/components/LoadingCircle";
+import { CheckIcon, SunIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Battery100Icon } from "@heroicons/react/24/solid";
+import EditableTaskList, { Task } from "@/components/EditableTaskList";
+import LightContainer from "@/components/LightContainer";
 
 interface SquareInfo {
   date: string;
@@ -92,6 +14,11 @@ interface SquareInfo {
 }
 
 const SolarPanels: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true); // Loading state
+  const [isWidgetOpen, setIsWidgetOpen] = useState(false); // Widget state
+  const [userData, setUserData] = useState<UserClass>(); // User data
+  const [dateNum, setDateNum] = useState(1); // User data
+  const [dates, setDates] = useState<string[]>(); // User data
   const [birthDate, setBirthDate] = useState<string>("2000-01-01"); // Replace with actual birth date
   const [currentDate, setCurrentDate] = useState<string>(
     dayjs().format("YYYY-MM-DD")
@@ -99,73 +26,141 @@ const SolarPanels: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string>(currentDate);
   const [taskData, setTaskData] = useState<Record<string, Task[]>>({}); // Tasks mapped by date
 
-  // Generate 1000 dates starting from the birth date
-  const generateDates = () => {
+  // Fetch user data from localStorage
+  useEffect(() => {
+    const fetchUserData = () => {
+      try {
+        const storedData = localStorage.getItem("DATA:USER");
+        if (storedData) {
+          const parsedData = JSON.parse(storedData);
+          console.log(parsedData);
+          setUserData(UserClass.fromJson(parsedData));
+        }
+      } catch (error) {}
+    };
+    setTimeout(fetchUserData, 500); // Simulate 1-second loading time
+  }, []);
+
+  // Update birth date and loading state when user data is loaded
+  useEffect(() => {
+    if (userData) {
+      console.log(userData.toJson());
+      setBirthDate(userData.dateOfBirth || "");
+      setIsLoading(false); // Mark loading as complete
+    }
+  }, [userData]);
+
+  useEffect(() => {
+    focusDate();
+  }, [birthDate]);
+
+  useEffect(() => {
     const dates = [];
-    for (let i = 0; i < 30000; i++) {
+    for (let i = 0; i < dateNum; i++) {
       dates.push(dayjs(birthDate).add(i, "day").format("YYYY-MM-DD"));
     }
-    return dates;
-  };
+    setDates(dates);
+  }, [dateNum]);
 
-  const dates = generateDates();
+  const focusDate = () => {
+    const id = calculateLifeDay(birthDate, currentDate);
+    setDateNum(id);
+    const targetDiv = document.getElementById(`${id}`);
+    if (targetDiv) {
+      targetDiv.scrollIntoView({ behavior: "smooth" }); // Smooth scrolling
+    }
+  };
 
   // Handle square click
   const handleSquareClick = (date: string) => {
     setSelectedDate(date);
+    setIsWidgetOpen(true);
   };
 
-  // Handle task changes for the current date
-  const handleTaskChange = (newTasks: Task[]) => {
+  const handleTaskChange = (tasks: Task[]) => {
     if (selectedDate === currentDate) {
       setTaskData((prev) => ({
         ...prev,
-        [currentDate]: newTasks,
+        [currentDate]: tasks,
+      }));
+    } else {
+      setTaskData((prev) => ({
+        ...prev,
+        [selectedDate]: tasks,
       }));
     }
+  };
+
+  // Function to calculate the life day
+  const calculateLifeDay = (birthday: string, targetDate: string) => {
+    const birthDate = new Date(birthday); // Convert birthday to Date object
+    const target = new Date(targetDate); // Convert target date to Date object
+
+    // Ensure target date is not earlier than the birthday
+    if (target < birthDate) {
+      return -1; // Return -1 to indicate an invalid date
+    }
+
+    // Calculate the difference in milliseconds
+    const differenceInMilliseconds = target.getTime() - birthDate.getTime();
+
+    // Convert milliseconds to days (add 1 to count the birthday as the first day)
+    const dayNumber =
+      Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24)) + 1;
+
+    return dayNumber;
   };
 
   // Get tasks for the selected date
   const selectedTasks = taskData[selectedDate] || [];
 
-  return (
-    <div className="flex h-screen px-6 py-24 bg-black">
-      {/* Left Section: Scrollable Grid with Black Background */}
-      <div className="w-full h-full overflow-y-auto grid grid-cols-100 p-1">
-        {dates.map((date) => (
-          <div
-            key={date}
-            className={`aspect-square bg-white ${
-              date === currentDate
-                ? "bg-green-500" // Highlight current date
-                : date === selectedDate
-                ? "bg-green-500" // Highlight selected date
-                : "opacity-20"
-            } cursor-pointer transition duration-200 ease-in-out hover:bg-white`}
-            onClick={() => handleSquareClick(date)}
-          ></div>
-        ))}
+  // Loading screen
+  if (isLoading) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center bg-black text-white">
+        <LoadingCircle />
       </div>
+    );
+  }
 
-      {/* Right Section: Info Panel */}
-      <div className="w-1/4 text-white p-4 shadow-lg">
-        <h2 className="text-xl font-bold mb-4">Square Information</h2>
-        {selectedDate ? (
-          <div>
-            <p className="mb-2">Date: {selectedDate}</p>
-            <h3 className="text-lg font-semibold mb-2">Tasks:</h3>
-            {selectedDate === currentDate ? (
-              <EditableTaskList
-                tasks={selectedTasks}
-                onChange={handleTaskChange}
-              />
-            ) : (
-              <ReadOnlyTaskList tasks={selectedTasks} />
-            )}
-          </div>
-        ) : (
-          <p>Select a square to see its details.</p>
-        )}
+  return (
+    <div className="flex bg-black text-white">
+      <div className="w-full h-screen overflow-y-auto grid grid-cols-10 p-1">
+        {dates?.map((date) => {
+          const id = calculateLifeDay(birthDate, date);
+          return (
+            // <div
+            //   key={date}
+            //   id={`${id}`}
+            //   className={`flex flex-col items-center justify-center aspect-square ${
+            //     date === currentDate
+            //       ? "bg-green-800" // Highlight current date
+            //       : date === selectedDate
+            //       ? "bg-white text-black" // Highlight selected date
+            //       : ""
+            //   } cursor-pointer transition duration-200 ease-in-out hover:bg-white hover:text-black`}
+            //   onClick={() => handleSquareClick(date)}
+            // >
+            //   <p className="">{id}</p>
+            // </div>
+            <LightContainer
+              key={date}
+              id={`${id}`}
+              date={date}
+              selectedDate={selectedDate}
+              selectedTasks={[]}
+              name={"Cube"}
+              percentage={45}
+              status={"OPENING"}
+            />
+          );
+        })}
+      </div>
+      <div
+        className="absolute bottom-0 p-5 bg-yellow-500 hover:bg-yellow-500 hover:text-white"
+        onClick={focusDate}
+      >
+        <SunIcon className="h-10 w-10" />
       </div>
     </div>
   );

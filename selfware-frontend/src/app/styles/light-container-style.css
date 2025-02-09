@@ -1,0 +1,41 @@
+/* Add this to your CSS file */
+@keyframes openingColorChange {
+    0% {
+      background-color: #f7f7c4; /* #1 */
+    }
+    10% {
+      background-color: #e9e89d; /* #2 */
+    }
+    20% {
+      background-color: #d1d168; /* #3 */
+    }
+    30% {
+      background-color: #b7c76a; /* #4 */
+    }
+    40% {
+      background-color: #88b73a; /* #5 */
+    }
+    50% {
+      background-color: #5a9a2b; /* #6 */
+    }
+    60% {
+      background-color: #4f872a; /* #7 */
+    }
+    70% {
+      background-color: #38711e; /* #8 */
+    }
+    80% {
+      background-color: #d1d168; /* #9 */
+    }
+    90% {
+      background-color: #e9e89d; /* #10 */
+    }
+    100% {
+      background-color: #f7f7c4; /* Loop back to start */
+    }
+  }
+  
+  .opening-bg {
+    animation: openingColorChange 3s linear infinite; /* Infinite loop over 10 seconds */
+  }
+  

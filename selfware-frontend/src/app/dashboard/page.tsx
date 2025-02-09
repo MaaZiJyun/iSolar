@@ -23,15 +23,17 @@ export default function StarLifecycle() {
   // Fetch user data from localStorage
   useEffect(() => {
     const fetchUserData = () => {
-      const storedData = localStorage.getItem("DATA:USER");
-      if (storedData) {
-        const parsedData = JSON.parse(storedData);
-        console.log(parsedData);
-        setUserData(UserClass.fromJson(parsedData));
-      }
+      try {
+        const storedData = localStorage.getItem("DATA:USER");
+        if (storedData) {
+          const parsedData = JSON.parse(storedData);
+          console.log(parsedData);
+          setUserData(UserClass.fromJson(parsedData));
+        }
+      } catch (error) {}
     };
 
-    setTimeout(fetchUserData, 1000); // Simulate 1-second loading time
+    setTimeout(fetchUserData, 500); // Simulate 1-second loading time
   }, []);
 
   // Update birth date and loading state when user data is loaded
@@ -192,7 +194,7 @@ export default function StarLifecycle() {
       <div className="flex flex-col h-screen w-full z-10 items-center justify-center text-center py-32">
         <h1 className="text-6xl font-bold mb-6">Star Lifecycle</h1>
         <p className="text-lg mb-8">The star has been running {elapsedTime}</p>
-        <StarComponent lifePercentage={lifePercentage}/>
+        <StarComponent lifePercentage={lifePercentage} />
         <p className="text-3xl mt-8">Current Stage: {prop.name}</p>
         <p className="mt-4 text-lg">Remaining: {lifePercentage.toFixed(1)}%</p>
       </div>
