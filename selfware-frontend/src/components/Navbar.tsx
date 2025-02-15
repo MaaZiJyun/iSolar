@@ -52,12 +52,12 @@ const Navbar: React.FC = () => {
           >
             Power Station
           </button>
-          <button
+          {/* <button
             className="hover:text-yellow-400 transition"
             onClick={() => navigate("/solar-system")}
           >
             Solar System
-          </button>
+          </button> */}
         </div>
 
         {/* Logout Button */}

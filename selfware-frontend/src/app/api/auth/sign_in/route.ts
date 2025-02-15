@@ -87,28 +87,4 @@ export async function POST(req: Request) {
         );
     }
 }
-// export async function POST(res: NextResponse) {
-//     try {
-//       // 获取请求数据
-//       const { email, password } = await res.json();
-  
-//       // 验证用户的身份逻辑（假设是 hardcoded 数据）
-//       if (email === 'domukino@gmail.com' && password === '066811') {
-//         return NextResponse.json({
-//           message: 'Login successful',
-//           user: { id: 1, email },
-//         });
-//       } else {
-//         return NextResponse.json(
-//           { error: 'Invalid credentials' },
-//           { status: 401 }
-//         );
-//       }
-//     } catch (error) {
-//       return NextResponse.json(
-//         { error: 'Internal server error' },
-//         { status: 500 }
-//       );
-//     }
-//   }
   

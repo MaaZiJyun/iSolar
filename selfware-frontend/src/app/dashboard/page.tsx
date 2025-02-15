@@ -3,6 +3,7 @@
 import GlassWindow from "@/components/GlassWindow";
 import LoadingCircle from "@/components/LoadingCircle";
 import LogoutButton from "@/components/LogoutButton";
+import StarBackground from "@/components/StarBackground";
 import StarComponent from "@/components/StarComponent";
 import { starProperties } from "@/data/starProperties";
 import UserClass from "@/modules/UserClass";
@@ -18,7 +19,6 @@ export default function StarLifecycle() {
   const [isWidgetOpen, setIsWidgetOpen] = useState(false); // Widget state
 
   const totalDays = 30000; // Assumed star lifespan in days
-  const canvasRef = useRef<HTMLCanvasElement | null>(null); // Canvas reference
 
   // Fetch user data from localStorage
   useEffect(() => {
@@ -44,70 +44,6 @@ export default function StarLifecycle() {
       setIsLoading(false); // Mark loading as complete
     }
   }, [userData]);
-
-  // Background animation (stars)
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const stars: { x: number; y: number; radius: number }[] = [];
-    const numStars = 200;
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    // Generate stars
-    for (let i = 0; i < numStars; i++) {
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 2,
-      });
-    }
-
-    const drawStars = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "white";
-      stars.forEach((star) => {
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-        ctx.fill();
-      });
-    };
-
-    const updateStars = () => {
-      stars.forEach((star) => {
-        star.y += 0.5;
-        if (star.y > canvas.height) {
-          star.y = 0;
-          star.x = Math.random() * canvas.width;
-        }
-      });
-    };
-
-    const animate = () => {
-      drawStars();
-      updateStars();
-      requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    // Handle resizing
-    const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   // Calculate remaining life percentage
   useEffect(() => {
@@ -172,10 +108,7 @@ export default function StarLifecycle() {
   if (isLoading) {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-black text-white">
-        <canvas
-          ref={canvasRef}
-          className="absolute top-0 left-0 w-full h-full"
-        ></canvas>
+        <StarBackground />
         <LoadingCircle />
       </div>
     );
@@ -183,13 +116,8 @@ export default function StarLifecycle() {
 
   // Main content
   return (
-    <div className="flex flex-col items-center justify-center bg-black text-white">
-      {/* Background canvas */}
-      <canvas
-        ref={canvasRef}
-        className="absolute top-0 left-0 w-full h-full"
-      ></canvas>
-
+    <div className="flex flex-col items-center justify-center text-white">
+      <StarBackground />
       {/* Main content */}
       <div className="flex flex-col h-screen w-full z-10 items-center justify-center text-center py-32">
         <h1 className="text-6xl font-bold mb-6">Star Lifecycle</h1>

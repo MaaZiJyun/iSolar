@@ -1,41 +1,104 @@
 /* Add this to your CSS file */
 @keyframes openingColorChange {
-    0% {
-      background-color: #f7f7c4; /* #1 */
-    }
-    10% {
-      background-color: #e9e89d; /* #2 */
-    }
-    20% {
-      background-color: #d1d168; /* #3 */
-    }
-    30% {
-      background-color: #b7c76a; /* #4 */
-    }
-    40% {
-      background-color: #88b73a; /* #5 */
-    }
-    50% {
-      background-color: #5a9a2b; /* #6 */
-    }
-    60% {
-      background-color: #4f872a; /* #7 */
-    }
-    70% {
-      background-color: #38711e; /* #8 */
-    }
-    80% {
-      background-color: #d1d168; /* #9 */
-    }
-    90% {
-      background-color: #e9e89d; /* #10 */
-    }
-    100% {
-      background-color: #f7f7c4; /* Loop back to start */
-    }
+
+  0% {
+    background-color: #fff;
+    color: #000;
+    /* #9 */
   }
-  
-  .opening-bg {
-    animation: openingColorChange 3s linear infinite; /* Infinite loop over 10 seconds */
+
+  50% {
+    background-color: #000;
+    color: #fff;
+    /* #10 */
   }
-  
+
+  100% {
+    background-color: #fff;
+    color: #000;
+    /* Loop back to start */
+  }
+}
+
+.opening-bg {
+  animation: openingColorChange 3s linear infinite;
+  /* Infinite loop over 10 seconds */
+}
+
+/* Define the rainbow gradient animation */
+@keyframes rainbow {
+  0% {
+    color: #ff0000;
+  }
+
+  /* Red */
+  16% {
+    color: #ff9a00;
+  }
+
+  /* Orange */
+  33% {
+    color: #d0de21;
+  }
+
+  /* Yellow */
+  50% {
+    color: #4fdc4a;
+  }
+
+  /* Green */
+  66% {
+    color: #3fdad8;
+  }
+
+  /* Cyan */
+  83% {
+    color: #2b65e6;
+  }
+
+  /* Blue */
+  100% {
+    color: #8a2be2;
+  }
+
+  /* Violet */
+}
+
+.icon-rainbow {
+  animation: rainbow 1.5s infinite linear;
+}
+
+@keyframes rainbow-border {
+  0% {
+    border: 2px solid #ff0000; /* Red */
+  }
+
+  16% {
+    border: 2px solid #ff9a00; /* Orange */
+  }
+
+  33% {
+    border: 2px solid #d0de21; /* Yellow */
+  }
+
+  50% {
+    border: 2px solid #4fdc4a; /* Green */
+  }
+
+  66% {
+    border: 2px solid #3fdad8; /* Cyan */
+  }
+
+  83% {
+    border: 2px solid #2b65e6; /* Blue */
+  }
+
+  100% {
+    border: 2px solid #8a2be2; /* Violet */
+  }
+}
+
+.border-rainbow {
+  animation: rainbow-border 1.5s infinite linear;
+  border-radius: 12px; /* Rounded corners */
+}

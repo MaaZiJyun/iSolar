@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import bcrypt from 'bcryptjs';
 import User from '@/modules/UserClass';
 import Link from 'next/link';
+import StarBackground from '@/components/StarBackground';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -46,7 +47,7 @@ export default function RegisterPage() {
       );
 
       // Submit the hashed password and other details
-      const res = await fetch('/api/users', {
+      const res = await fetch('/api/auth/sign_up', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -80,62 +81,9 @@ export default function RegisterPage() {
     }
   };
 
-  useEffect(() => {
-    const canvas = document.getElementById('universe-bg') as HTMLCanvasElement;
-    const ctx = canvas.getContext('2d');
-    const stars: { x: number; y: number; radius: number }[] = [];
-    const numStars = 200;
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    // Generate stars
-    for (let i = 0; i < numStars; i++) {
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random(),
-      });
-    }
-    const draw = () => {
-      if (!ctx) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = 'white';
-      stars.forEach((star) => {
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2, false);
-        ctx.fill();
-      });
-    };
-
-    const update = () => {
-      stars.forEach((star) => {
-        star.y += 0.5;
-        if (star.y > canvas.height) {
-          star.y = 0;
-          star.x = Math.random() * canvas.width;
-        }
-      });
-    };
-
-    const animate = () => {
-      draw();
-      update();
-      requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    window.addEventListener('resize', () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
-  }, []);
-
   return (
     <div className="relative h-screen flex items-center justify-center bg-black overflow-hidden">
-      {/* Universe Background */}
-      <canvas id="universe-bg" className="absolute top-0 left-0 w-full h-full"></canvas>
+      <StarBackground />
 
       {/* Form Wrapper */}
       <div className="relative z-10 bg-white/10 backdrop-blur-xs border border-white/30 shadow-lg p-8 rounded-xl w-full max-w-md">

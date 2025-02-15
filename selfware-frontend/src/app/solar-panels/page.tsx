@@ -1,66 +1,90 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import dayjs from "dayjs"; // For date manipulation
+import React, { useState, useEffect, JSX } from "react";
+import dayjs from "dayjs";
 import UserClass from "@/modules/UserClass";
 import LoadingCircle from "@/components/LoadingCircle";
-import { CheckIcon, SunIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Battery100Icon } from "@heroicons/react/24/solid";
-import EditableTaskList, { Task } from "@/components/EditableTaskList";
-import LightContainer from "@/components/LightContainer";
-
-interface SquareInfo {
-  date: string;
-  tasks: Task[];
-}
+import { SunIcon } from "@heroicons/react/24/outline"; // Removed unused icons
+import Cube from "@/components/Cube";
+import CubeClass from "@/modules/CubeClass";
+import TaskClass from "@/modules/TaskClass";
+import StarBackground from "@/components/StarBackground";
 
 const SolarPanels: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(true); // Loading state
-  const [isWidgetOpen, setIsWidgetOpen] = useState(false); // Widget state
-  const [userData, setUserData] = useState<UserClass>(); // User data
-  const [dateNum, setDateNum] = useState(1); // User data
-  const [dates, setDates] = useState<string[]>(); // User data
-  const [birthDate, setBirthDate] = useState<string>("2000-01-01"); // Replace with actual birth date
-  const [currentDate, setCurrentDate] = useState<string>(
-    dayjs().format("YYYY-MM-DD")
-  );
-  const [selectedDate, setSelectedDate] = useState<string>(currentDate);
-  const [taskData, setTaskData] = useState<Record<string, Task[]>>({}); // Tasks mapped by date
+  const [isLoading, setIsLoading] = useState(true);
+  const [userData, setUserData] = useState<UserClass>();
+  const [dateNum, setDateNum] = useState(100);
+  const [dates, setDates] = useState<string[]>([]);
+  const [existingCubeList, setExistingCubeList] = useState<CubeClass[]>([]);
+  const [cubeList, setCubeList] = useState<CubeClass[]>([]);
+  const [birthDate, setBirthDate] = useState<string>("2025-02-01");
+  const [currentDate] = useState<string>(dayjs().format("YYYY-MM-DD"));
+  const [selectedDate] = useState<string>(currentDate);
 
-  // Fetch user data from localStorage
   useEffect(() => {
     const fetchUserData = () => {
       try {
         const storedData = localStorage.getItem("DATA:USER");
         if (storedData) {
           const parsedData = JSON.parse(storedData);
-          console.log(parsedData);
           setUserData(UserClass.fromJson(parsedData));
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log("error on userdata");
+      }
     };
-    setTimeout(fetchUserData, 500); // Simulate 1-second loading time
+    setTimeout(fetchUserData, 500);
   }, []);
 
-  // Update birth date and loading state when user data is loaded
   useEffect(() => {
-    if (userData) {
-      console.log(userData.toJson());
-      setBirthDate(userData.dateOfBirth || "");
-      setIsLoading(false); // Mark loading as complete
-    }
+    const effectAsync = async () => {
+      if (userData) {
+        setBirthDate(userData.dateOfBirth || "");
+        await fetchAndSetCubes(userData);
+        setIsLoading(false);
+        console.log("loading finished");
+      } else {
+        console.log("wrong userdata");
+      }
+    };
+    effectAsync();
   }, [userData]);
 
   useEffect(() => {
-    focusDate();
-  }, [birthDate]);
-
-  useEffect(() => {
-    const dates = [];
-    for (let i = 0; i < dateNum; i++) {
-      dates.push(dayjs(birthDate).add(i, "day").format("YYYY-MM-DD"));
+    if (userData) {
+      const list: CubeClass[] = [];
+      console.log("existingCubeList", existingCubeList);
+      dates.forEach((date) => {
+        const index = existingCubeList.findIndex((c: CubeClass) => {
+          const cubeDate = c.date.split("T")[0]; // 提取日期部分
+          return cubeDate === date;
+        });
+        if (index !== -1) {
+          list.push(existingCubeList[index]);
+        } else {
+          list.push(
+            new CubeClass(-1, userData?.id, "My Cube", date, 0, "OPENING")
+          );
+        }
+      });
+      console.log("list", list);
+      setCubeList(list);
     }
-    setDates(dates);
-  }, [dateNum]);
+  }, [existingCubeList, dates]);
+
+  const fetchAndSetCubes = async (userData: UserClass) => {
+    const shownDates = [];
+
+    for (let i = 0; i < dateNum; i++) {
+      shownDates.push(
+        dayjs(currentDate).subtract(i, "day").format("YYYY-MM-DD")
+      );
+    }
+    const reversedDates = shownDates.reverse();
+    console.log("dates", reversedDates);
+    setDates(reversedDates);
+    const cubes = await getCubesById(userData.id);
+    setExistingCubeList(cubes);
+  };
 
   const focusDate = () => {
     const id = calculateLifeDay(birthDate, currentDate);
@@ -68,26 +92,6 @@ const SolarPanels: React.FC = () => {
     const targetDiv = document.getElementById(`${id}`);
     if (targetDiv) {
       targetDiv.scrollIntoView({ behavior: "smooth" }); // Smooth scrolling
-    }
-  };
-
-  // Handle square click
-  const handleSquareClick = (date: string) => {
-    setSelectedDate(date);
-    setIsWidgetOpen(true);
-  };
-
-  const handleTaskChange = (tasks: Task[]) => {
-    if (selectedDate === currentDate) {
-      setTaskData((prev) => ({
-        ...prev,
-        [currentDate]: tasks,
-      }));
-    } else {
-      setTaskData((prev) => ({
-        ...prev,
-        [selectedDate]: tasks,
-      }));
     }
   };
 
@@ -111,59 +115,77 @@ const SolarPanels: React.FC = () => {
     return dayNumber;
   };
 
+  const getCubesById = async (userId: string): Promise<CubeClass[]> => {
+    try {
+      // Build the query URL with the userId
+      const url = `/api/cube/get_all_cubes?userId=${userId}`;
+
+      // Make the GET request
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      // Check if the response is okay
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to fetch cubes");
+      }
+
+      // Parse the JSON data from the API response
+      const { data } = await response.json();
+
+      // Convert each item in the data array into an instance of CubeClass
+      const cubes = data.map((item: any) => CubeClass.fromJson(item));
+
+      // Return the array of CubeClass instances
+      return cubes;
+    } catch (error: any) {
+      console.error("Error fetching cubes:", error.message);
+
+      // Return an empty array to handle errors gracefully
+      return [];
+    }
+  };
+
   // Get tasks for the selected date
-  const selectedTasks = taskData[selectedDate] || [];
+  // const selectedTasks = taskData[selectedDate] || [];
 
   // Loading screen
-  if (isLoading) {
+  if (isLoading || userData === undefined) {
     return (
-      <div className="h-screen flex flex-col items-center justify-center bg-black text-white">
+      <div className="h-screen flex flex-col items-center justify-center text-white">
+        <StarBackground />
         <LoadingCircle />
       </div>
     );
-  }
-
-  return (
-    <div className="flex bg-black text-white">
-      <div className="w-full h-screen overflow-y-auto grid grid-cols-10 p-1">
-        {dates?.map((date) => {
-          const id = calculateLifeDay(birthDate, date);
-          return (
-            // <div
-            //   key={date}
-            //   id={`${id}`}
-            //   className={`flex flex-col items-center justify-center aspect-square ${
-            //     date === currentDate
-            //       ? "bg-green-800" // Highlight current date
-            //       : date === selectedDate
-            //       ? "bg-white text-black" // Highlight selected date
-            //       : ""
-            //   } cursor-pointer transition duration-200 ease-in-out hover:bg-white hover:text-black`}
-            //   onClick={() => handleSquareClick(date)}
-            // >
-            //   <p className="">{id}</p>
-            // </div>
-            <LightContainer
-              key={date}
-              id={`${id}`}
-              date={date}
-              selectedDate={selectedDate}
-              selectedTasks={[]}
-              name={"Cube"}
-              percentage={45}
-              status={"OPENING"}
-            />
-          );
-        })}
+  } else
+    return (
+      <div className="flex text-white">
+        <StarBackground />
+        <div className="w-full h-screen overflow-y-auto grid grid-cols-10 p-1">
+          {dates.map((date, index) => {
+            const key = calculateLifeDay(birthDate, date);
+            return (
+              <Cube
+                key={key}
+                order={key}
+                user={userData}
+                cube={cubeList[index]}
+              />
+            );
+          })}
+        </div>
+        <div
+          className="absolute bottom-0 p-5 bg-yellow-500 hover:bg-yellow-500 hover:text-white"
+          onClick={focusDate}
+        >
+          <SunIcon className="h-10 w-10" />
+        </div>
       </div>
-      <div
-        className="absolute bottom-0 p-5 bg-yellow-500 hover:bg-yellow-500 hover:text-white"
-        onClick={focusDate}
-      >
-        <SunIcon className="h-10 w-10" />
-      </div>
-    </div>
-  );
+    );
 };
 
 export default SolarPanels;
