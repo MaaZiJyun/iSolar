@@ -18,6 +18,13 @@ export default function StarLifecycle() {
   const [elapsedTime, setElapsedTime] = useState(""); // Dynamic timer
   const [isWidgetOpen, setIsWidgetOpen] = useState(false); // Widget state
 
+  const [timeLeft, setTimeLeft] = useState<{
+    days: any;
+    hours: any;
+    minutes: any;
+    seconds: any;
+  }>();
+
   const totalDays = 30000; // Assumed star lifespan in days
 
   // Fetch user data from localStorage
@@ -53,39 +60,60 @@ export default function StarLifecycle() {
       const daysLived = Math.floor(
         (today.getTime() - birth.getTime()) / (1000 * 60 * 60 * 24)
       );
+      setElapsedTime(`${daysLived} Days`);
       const remainingPercentage = Math.max(
         0,
         ((totalDays - daysLived) / totalDays) * 100
       );
       setLifePercentage(remainingPercentage);
+
+      const interval = setInterval(() => {
+        setTimeLeft(calculateTimeLeft());
+      }, 1); // Update every millisecond
+
+      return () => clearInterval(interval); // Cleanup on unmount
     }
   }, [birthDate]);
 
-  // Dynamic timer (elapsed time since birth)
-  useEffect(() => {
-    const birth = new Date(birthDate).getTime();
+  const calculateTimeLeft = () => {
+    const birthdate = new Date(birthDate);
+    const targetDate = new Date(
+      birthdate.getTime() + totalDays * 24 * 60 * 60 * 1000
+    ); // Add 30,000 days
+    const now = new Date();
 
-    const updateTimer = () => {
-      const now = Date.now();
-      const diff = now - birth;
+    const diff = targetDate.getTime() - now.getTime(); // Time difference in milliseconds
 
-      // Calculate time components
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-      //   const milliseconds = Math.floor(diff % 1000);
+    if (diff <= 0) {
+      return {
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        milliseconds: 0,
+      };
+    }
 
-      // Format elapsed time
-      setElapsedTime(
-        `${days} Days ${hours} Hours ${minutes} mins ${seconds} seconds`
-      );
-    };
+    const days = Math.floor(diff / (24 * 60 * 60 * 1000));
+    const hours = Math.floor((diff % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+    const minutes = Math.floor((diff % (60 * 60 * 1000)) / (60 * 1000));
+    const seconds = Math.floor((diff % (60 * 1000)) / 1000);
+    const time = { days, hours, minutes, seconds };
+    return time;
+  };
 
-    const timer = setInterval(updateTimer, 10); // Update every 10ms
+  const formatTime = (time: {
+    days: any;
+    hours: any;
+    minutes: any;
+    seconds: any;
+  }) => {
+    const { days, hours, minutes, seconds } = time;
 
-    return () => clearInterval(timer);
-  }, [birthDate]);
+    return `${days} ${String(hours).padStart(2, "0")}:${String(
+      minutes
+    ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  };
 
   // Define the return type of the function
   const getStarProperties = (lifePercentage: number) => {
@@ -120,9 +148,17 @@ export default function StarLifecycle() {
       <StarBackground />
       {/* Main content */}
       <div className="flex flex-col h-screen w-full z-10 items-center justify-center text-center py-32">
-        <h1 className="text-6xl font-bold mb-6">Star Lifecycle</h1>
-        <p className="text-lg mb-8">The star has been running {elapsedTime}</p>
-        <StarComponent lifePercentage={lifePercentage} />
+        <p className="text-lg mb-2">
+          [The star has been running {elapsedTime}]
+        </p>
+        <h1 className="text-6xl text-yellow-500 font-bold mb-8">
+          {timeLeft && `${formatTime(timeLeft)}`}
+        </h1>
+
+        <div className="my-8">
+          <StarComponent lifePercentage={lifePercentage} />
+        </div>
+
         <p className="text-3xl mt-8">Current Stage: {prop.name}</p>
         <p className="mt-4 text-lg">Remaining: {lifePercentage.toFixed(1)}%</p>
       </div>

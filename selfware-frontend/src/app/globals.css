@@ -28,10 +28,18 @@
   }
 }
 
+@font-face {  
+  font-family: 'Orbitron';  
+  src: url('/fonts/Orbitron-VariableFont_wght.ttf') format('truetype');  
+  font-weight: 100 900; /* Adjust based on the font's weight range */  
+  font-style: normal;  
+}  
+
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Orbitron', sans-serif;  
+  /* font-family: Arial, Helvetica, sans-serif; */
 }
 
 .bg-black-white-10 {

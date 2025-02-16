@@ -102,12 +102,12 @@ const Cube: React.FC<CubeProps> = ({ order: key, user, cube }) => {
         </div>
         {isWidgetOpen && (
           <div className="bg-black-white-10 fixed h-full w-full inset-0 flex items-center justify-center backdrop-blur-xs z-50">
-            <div className="flex w-2/3 bg-black-white-10 backdrop-blur-md p-6 rounded-xl shadow-lg">
-              <div>
+            <div className="flex items-center justify-between w-2/3 bg-black-white-10 backdrop-blur-md p-6 rounded-xl shadow-lg">
+              <div className="w-full">
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className="text-4xl font-bold mb-2">
-                      Energy Efficiency
+                      Daily Energy Efficiency
                     </h2>
                     <p className="mb-2">{cube.date}</p>
                   </div>
