@@ -1,9 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import {
+  ArrowDownTrayIcon,
   ArrowUturnLeftIcon,
+  Battery0Icon,
+  Battery100Icon,
+  Battery50Icon,
   CheckCircleIcon,
   CheckIcon,
+  ClockIcon,
   PencilSquareIcon,
   PlusIcon,
   TrashIcon,
@@ -28,9 +33,32 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
   const [newTaskRemarks, setNewTaskRemarks] = useState<string>("");
   const [editIndex, setEditIndex] = useState<number | null>(null); // Track which task is in edit mode
 
+  const DailyTaskList: { name: string; remark: string }[] = [
+    { name: "Eat on time", remark: "Including breakfast, lunch and dinner" },
+    { name: "Sleep on time", remark: "Sleep and wake up early" },
+    {
+      name: "Drinking Water",
+      remark: "At least 8 cups of water need to be consumed daily",
+    },
+    { name: "Studying", remark: "Learn something new everyday" },
+    { name: "Communication", remark: "Talk to people around" },
+    { name: "Reading", remark: "Read books or papers" },
+    { name: "Violin", remark: "Need to practice playing violin everyday" },
+    { name: "Exercise", remark: "Need to do exercise" },
+    { name: "Writing", remark: "Write down the ideas and thought for today" },
+    { name: "Reflection", remark: "Review what you have done today" },
+  ];
+
   useEffect(() => {
     getTasksByDateFromDB(newTaskDate, user.id);
   }, [newTaskDate, user.id]);
+
+  const importFrequentTaskList = () => {
+    DailyTaskList.forEach(async (task) => {
+      await insertNewTaskToDB(task.name, task.remark);
+      console.log(`adding ${task.name}`);
+    });
+  };
 
   const getTasksByDateFromDB = async (date: string, userId: string) => {
     try {
@@ -132,7 +160,10 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
     setTaskList(updatedTasks);
   };
 
-  const insertNewTaskToDB = async () => {
+  const insertNewTaskToDB = async (
+    newTaskName: string,
+    newTaskRemarks: string
+  ) => {
     // Create a new task instance with a temporary placeholder ID (-1)
     const newTask = new TaskClass(
       -1, // Placeholder ID (will be updated after backend response)
@@ -221,30 +252,51 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
   };
 
   return (
-    <div className="text-white my-6 space-y-4">
-      <div className="flex space-x-2">
-        <input
-          type="text"
-          value={newTaskName}
-          onChange={(e) => setNewTaskName(e.target.value)}
-          placeholder="Task Name"
-          className="flex-grow mr-2 w-full px-4 py-2 bg-white/10 text-black placeholder-gray-300 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-        />
-        <input
-          type="text"
-          value={newTaskRemarks}
-          onChange={(e) => setNewTaskRemarks(e.target.value)}
-          placeholder="Remarks"
-          className="flex-grow mr-2 w-full px-4 py-2 bg-white/10 text-black placeholder-gray-300 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-        />
-        <button onClick={insertNewTaskToDB} className="text-white p-2 rounded">
-          <PlusIcon className="h-6 w-6" />
-        </button>
+    <div className="my-6 space-y-4">
+      <div className="flex items-center space-x-2">
+        <div className="flex-grow">
+          <label htmlFor="newTaskName" className="text-sm">Task Title</label>
+          <input
+            type="text"
+            value={newTaskName}
+            onChange={(e) => setNewTaskName(e.target.value)}
+            // placeholder="Task Name"
+            className="bg-black-white-10 mr-2 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          />
+        </div>
+        <div className="flex-grow">
+          <label htmlFor="newTaskName" className="text-sm">Remarks</label>
+          <input
+            type="text"
+            value={newTaskRemarks}
+            onChange={(e) => setNewTaskRemarks(e.target.value)}
+            // placeholder="Remarks"
+            className="bg-black-white-10 mr-2 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          />
+        </div>
+        <div className="flex">
+          <button
+            onClick={() => {
+              insertNewTaskToDB(newTaskName, newTaskRemarks);
+            }}
+            className="p-2 rounded"
+          >
+            <PlusIcon className="h-6 w-6" />
+          </button>
+          {taskList.length < 1 && (
+            <button
+              onClick={() => importFrequentTaskList()}
+              className="p-2 rounded"
+            >
+              <ClockIcon className="h-6 w-6" />
+            </button>
+          )}
+        </div>
       </div>
       {isLoading ? (
         <div>The data is loading</div>
       ) : (
-        <>
+        <div className=" h-96 overflow-y-auto">
           {taskList.length > 0 && (
             <table className="w-full border-b">
               <thead>
@@ -252,19 +304,19 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
                   {/* <th className="text-left px-4 py-2 text-white font-bold">
                     <span className="m-2 block">ID</span>
                   </th> */}
-                  <th className="text-left px-4 py-2 text-white font-bold">
+                  <th className="text-left px-4 py-2 font-bold">
                     <span className="m-2 block">Name</span>
                   </th>
-                  <th className="text-left px-4 py-2 text-white font-bold">
+                  <th className="text-left px-4 py-2 font-bold">
                     <span className="m-2 block">Remarks</span>
                   </th>
-                  <th className="text-left px-4 py-2 text-white font-bold">
+                  <th className="text-left px-4 py-2 font-bold">
                     <span className="m-2 block">Completion</span>
                   </th>
-                  <th className="text-left px-4 py-2 text-white font-bold">
+                  <th className="text-left px-4 py-2 font-bold">
                     <span className="m-2 block">Mark</span>
                   </th>
-                  <th className="text-left px-4 py-2 text-white font-bold">
+                  <th className="text-left px-4 py-2 font-bold">
                     <span className="m-2 block">Actions</span>
                   </th>
                 </tr>
@@ -273,11 +325,7 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
               <tbody>
                 {taskList.map((task) => (
                   <tr key={task.id} className="hover:bg-white/15">
-                    {/* Task ID */}
-                    {/* <td className="text-white px-4 py-2">
-                      <span className="m-2 block">{task.id}</span>
-                    </td> */}
-                    <td className="text-white px-4 py-2">
+                    <td className="px-4 py-2">
                       {editIndex === task.id ? (
                         <input
                           type="text"
@@ -285,13 +333,13 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
                           onChange={(e) =>
                             handleTaskChange(task.id, { name: e.target.value })
                           }
-                          className="w-full bg-transparent text-white m-2 block" // Set input background to transparent
+                          className="w-full bg-transparent m-2 block" // Set input background to transparent
                         />
                       ) : (
                         <span className="m-2 block">{task.name}</span>
                       )}
                     </td>
-                    <td className="text-white px-4 py-2">
+                    <td className="px-4 py-2">
                       {editIndex === task.id ? (
                         <input
                           type="text"
@@ -301,43 +349,76 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
                               remarks: e.target.value,
                             })
                           }
-                          className="w-full bg-transparent text-white m-2 block" // Set input background to transparent
+                          className="w-full bg-transparent m-2 block" // Set input background to transparent
                         />
                       ) : (
-                        <span className="text-xs m-2 block">{task.remarks}</span>
+                        <span className="text-xs m-2 block">
+                          {task.remarks}
+                        </span>
                       )}
                     </td>
                     {/* Task Completion Bar */}
-                    <td className="text-white px-2 py-2">
-                      <div className="relative bg-white/45 rounded-lg h-6 m-2 block">
-                        {/* Progress Bar Filler */}
-                        <div
-                          className="h-6 bg-green-400 rounded-lg transition-all duration-300"
-                          style={{ width: `${task.completion}` }} // Added percentage symbol
-                        ></div>
 
-                        {/* Progress Text Overlay */}
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-white font-bold">
-                            {task.completion}
-                          </span>
+                    <td className="px-4 py-2">
+                      {editIndex === task.id ? (
+                        <div className="flex w-full space-x-2 m-2">
+                          <button
+                            className="hover:text-red-500"
+                            onClick={() => {
+                              handleTaskChange(task.id, { completion: "0%" });
+                              setEditIndex(null);
+                            }}
+                          >
+                            <Battery0Icon className="h-6 w-6" />
+                          </button>
+                          <button
+                            className="hover:text-yellow-500"
+                            onClick={() => {
+                              handleTaskChange(task.id, { completion: "50%" });
+                              setEditIndex(null);
+                            }}
+                          >
+                            <Battery50Icon className="h-6 w-6" />
+                          </button>
+                          <button
+                            className="hover:text-green-500"
+                            onClick={() => {
+                              handleTaskChange(task.id, { completion: "100%" });
+                              setEditIndex(null);
+                            }}
+                          >
+                            <Battery100Icon className="h-6 w-6" />
+                          </button>
                         </div>
-                      </div>
+                      ) : (
+                        <div className="relative bg-black-white-10 rounded-lg h-6 m-2 block">
+                          {/* Progress Bar Filler */}
+                          <div
+                            className="h-6 bg-black-white-50 rounded-lg transition-all duration-300"
+                            style={{ width: `${task.completion}` }} // Added percentage symbol
+                          ></div>
+
+                          {/* Progress Text Overlay */}
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="font-bold">{task.completion}</span>
+                          </div>
+                        </div>
+                      )}
                     </td>
-                    <td className="text-white px-4 py-2">
+                    <td className="px-4 py-2">
                       <span className="m-2 block">
                         {task.mark === "Failure" ? "None" : task.mark}
                       </span>
                     </td>
-                    <td className="text-white px-4 py-2">
+                    <td className="px-4 py-2">
                       {editIndex === task.id ? (
                         <>
                           {isUpdating ? (
                             <>
                               <div className="flex space-x-2">
-                                <ArrowUturnLeftIcon className="h-6 w-6 text-gray-300" />
+                                <ArrowUturnLeftIcon className="h-6 w-6" />
 
-                                <TrashIcon className="h-6 w-6 text-gray-300" />
+                                <TrashIcon className="h-6 w-6" />
                               </div>
                             </>
                           ) : (
@@ -354,7 +435,7 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
                       ) : (
                         <div className="m-2 block">
                           <button onClick={() => toggleEdit(task.id)}>
-                            <PencilSquareIcon className="h-6 w-6 text-white" />
+                            <PencilSquareIcon className="h-6 w-6" />
                           </button>
                         </div>
                       )}
@@ -364,7 +445,7 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
               </tbody>
             </table>
           )}
-        </>
+        </div>
       )}
     </div>
   );

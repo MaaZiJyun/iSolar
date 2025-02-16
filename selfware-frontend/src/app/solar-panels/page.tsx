@@ -156,14 +156,14 @@ const SolarPanels: React.FC = () => {
   // Loading screen
   if (isLoading || userData === undefined) {
     return (
-      <div className="h-screen flex flex-col items-center justify-center text-white">
+      <div className="h-screen flex flex-col items-center justify-center">
         <StarBackground />
         <LoadingCircle />
       </div>
     );
   } else
     return (
-      <div className="flex text-white">
+      <div className="flex">
         <StarBackground />
         <div className="w-full h-screen overflow-y-auto grid grid-cols-10 p-1">
           {dates.map((date, index) => {

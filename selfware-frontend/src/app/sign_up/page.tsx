@@ -82,12 +82,12 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="relative h-screen flex items-center justify-center bg-black overflow-hidden">
+    <div className="relative h-screen flex items-center justify-center overflow-hidden">
       <StarBackground />
 
       {/* Form Wrapper */}
-      <div className="relative z-10 bg-white/10 backdrop-blur-xs border border-white/30 shadow-lg p-8 rounded-xl w-full max-w-md">
-        <h1 className="text-3xl font-semibold text-white text-center mb-4">Register</h1>
+      <div className="relative z-10 bg-black-white-10 backdrop-blur-xs border border-white/30 shadow-lg p-8 rounded-xl w-full max-w-md">
+        <h1 className="text-3xl font-semibold text-center mb-4">Register</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
@@ -96,7 +96,7 @@ export default function RegisterPage() {
             value={formData.username}
             onChange={handleInputChange}
             required
-            className="w-full px-4 py-2 bg-white/10 text-white placeholder-gray-300 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full px-4 py-2 bg-black-white-10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           <input
             type="email"
@@ -105,7 +105,7 @@ export default function RegisterPage() {
             value={formData.email}
             onChange={handleInputChange}
             required
-            className="w-full px-4 py-2 bg-white/10 text-white placeholder-gray-300 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full px-4 py-2 bg-black-white-10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           <input
             type="password"
@@ -114,7 +114,7 @@ export default function RegisterPage() {
             value={formData.password}
             onChange={handleInputChange}
             required
-            className="w-full px-4 py-2 bg-white/10 text-white placeholder-gray-300 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full px-4 py-2 bg-black-white-10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           <input
             type="text"
@@ -122,14 +122,14 @@ export default function RegisterPage() {
             placeholder="Contact (e.g., phone number)"
             value={formData.contact}
             onChange={handleInputChange}
-            className="w-full px-4 py-2 bg-white/10 text-white placeholder-gray-300 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full px-4 py-2 bg-black-white-10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           <select
             name="gender"
             value={formData.gender}
             onChange={handleInputChange}
             required
-            className="w-full px-4 py-2 bg-white/10 text-white placeholder-gray-300 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full px-4 py-2 bg-black-white-10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             <option value="">Select Gender</option>
             <option value="Male">Male</option>
@@ -141,18 +141,18 @@ export default function RegisterPage() {
             name="dateOfBirth"
             value={formData.dateOfBirth}
             onChange={handleInputChange}
-            className="w-full px-4 py-2 bg-white/10 text-white placeholder-gray-300 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full px-4 py-2 bg-black-white-10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           <textarea
             name="bio"
             placeholder="Write a short bio..."
             value={formData.bio}
             onChange={handleInputChange}
-            className="w-full px-4 py-2 bg-white/10 text-white placeholder-gray-300 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full px-4 py-2 bg-black-white-10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           ></textarea>
           <button
             type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg font-medium focus:outline-none transition"
+            className="w-full bg-black-white-50 hover:bg-yellow-300 py-2 rounded-lg font-medium focus:outline-none transition"
           >
             Register
           </button>

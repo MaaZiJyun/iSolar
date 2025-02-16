@@ -1,6 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { EyeIcon, LightBulbIcon, XMarkIcon } from "@heroicons/react/24/outline"; // Ensure you have Heroicons installed
+import {
+  EyeIcon,
+  FaceFrownIcon,
+  FaceSmileIcon,
+  LightBulbIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline"; // Ensure you have Heroicons installed
 import dayjs from "dayjs";
 import "@/app/styles/light-container-style.css";
 import CubeClass from "@/modules/CubeClass";
@@ -44,13 +50,13 @@ const Cube: React.FC<CubeProps> = ({ order: key, user, cube }) => {
 
   const getColorByPercentage = (percentage: number): string => {
     if (percentage >= 75) {
-      return "bg-green-500/20"; // Almost complete
+      return "text-green-500"; // Almost complete
     } else if (percentage >= 50) {
-      return "bg-yellow-500/20"; // Halfway
+      return "text-yellow-500"; // Halfway
     } else if (percentage >= 25) {
-      return "bg-orange-500/20"; // Making progress
+      return "text-orange-500"; // Making progress
     } else {
-      return "bg-red-500/20"; // Very little progress
+      return "text-red-500"; // Very little progress
     }
   };
 
@@ -65,27 +71,48 @@ const Cube: React.FC<CubeProps> = ({ order: key, user, cube }) => {
           )} cursor-pointer transition duration-200 ease-in-out hover:bg-white/60 hover:text-black`}
           onClick={() => setIsWidgetOpen(true)}
         >
-          <p className="text-6xl">
-            {cube.percentage}
-            <span className="text-sm">%</span>
-          </p>
-          <p className="text-xs">{cube.date}</p>
+          {cube.date === currentDate ? (
+            <div className="flex flex-col items-center">
+              <p className="text-4xl">
+                {cube.percentage.toFixed(1)}
+                <span className="text-sm">%</span>
+              </p>
+              <p className="text-xs">{cube.date}</p>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center opacity-45">
+              {cube.id === -1 ? (
+                <>
+                  <p className="text-3xl">EMPTY</p>
+                  <p className="text-xs">{cube.date}</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-4xl">
+                    {cube.percentage.toFixed(1)}
+                    <span className="text-sm">%</span>
+                  </p>
+                  <p className="text-xs">{cube.date}</p>
+                </>
+              )}
+            </div>
+          )}
         </div>
         {isWidgetOpen && (
-          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-black/45 backdrop-blur-sm">
-            <div className="w-2/3 bg-white/20 backdrop-blur-md p-6 rounded-xl text-white shadow-lg">
+          <div className="bg-black-white-10 fixed h-full w-full inset-0 flex items-center justify-center backdrop-blur-sm z-50">
+            <div className="w-2/3 bg-white/20 backdrop-blur-md p-6 rounded-xl shadow-lg">
               <div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-4xl font-bold mb-4">
+                    <h2 className="text-4xl font-bold mb-2">
                       Energy Efficiency
                     </h2>
-                    <p className="mb-2">Date: {cube.date}</p>
+                    <p className="mb-2">{cube.date}</p>
                   </div>
-                  <div className="space-x-4">
+                  <div className="space-x-4 mb-2">
                     {cube.date === currentDate && (
                       <button onClick={handleRedirect}>
-                        <div className="border-2 rounded-xl p-2 hover:text-yellow-500 hover:border-yellow-500">
+                        <div className="rounded-xl p-2 hover:text-yellow-500 hover:border-yellow-500">
                           <LightBulbIcon className="h-10 w-10 " />
                         </div>
                       </button>
@@ -97,7 +124,7 @@ const Cube: React.FC<CubeProps> = ({ order: key, user, cube }) => {
                         setIsWidgetOpen(false);
                       }}
                     >
-                      <div className="border-2 rounded-xl p-2 hover:text-red-500 hover:border-red-500">
+                      <div className="rounded-xl p-2 hover:text-red-500 hover:border-red-500">
                         <XMarkIcon className="h-10 w-10" />
                       </div>
                     </button>
@@ -111,17 +138,17 @@ const Cube: React.FC<CubeProps> = ({ order: key, user, cube }) => {
                     <ReadOnlyTaskList user={user} date={cube.date} />
                   )}
                   {/* <div>{cube.percentage}</div> */}
-                  <div className="relative bg-white/20 rounded-lg h-6 m-2 block">
+                  <div className="relative bg-black-white-10 rounded-lg h-6 m-2 block">
                     {/* Progress Bar Filler */}
                     <div
-                      className="h-6 bg-white/45 rounded-lg transition-all duration-300"
+                      className="h-6 bg-black-white-50 rounded-lg transition-all duration-300"
                       style={{ width: `${cube.percentage}%` }} // Added percentage symbol
                     ></div>
 
                     {/* Progress Text Overlay */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-white font-bold">
-                        {cube.percentage}%
+                      <span className="font-bold">
+                        {cube.percentage.toFixed(2)}%
                       </span>
                     </div>
                   </div>

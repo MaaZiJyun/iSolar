@@ -28,7 +28,7 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="bg-black/30 backdrop-blur-sm text-white py-4 px-6 fixed top-0 left-0 w-full z-40">
+    <nav className="bg-black-white-10 backdrop-blur-sm py-4 px-6 fixed top-0 left-0 w-full z-40">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
         {/* Title */}
         <span

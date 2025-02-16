@@ -5,6 +5,10 @@ import { useEffect, useRef, useState } from "react";
 
 export default function StarBackground() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null); // Canvas reference
+  // Get CSS variables for background and foreground
+  const rootStyles = getComputedStyle(document.documentElement);
+  const background = rootStyles.getPropertyValue("--background").trim() || "defaultBackground"; // Fallback value
+  const foreground = rootStyles.getPropertyValue("--foreground").trim() || "defaultForeground"; // Fallback value
   // Background animation (stars)
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -30,7 +34,7 @@ export default function StarBackground() {
 
     const drawStars = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "white";
+      ctx.fillStyle = foreground;
       stars.forEach((star) => {
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);

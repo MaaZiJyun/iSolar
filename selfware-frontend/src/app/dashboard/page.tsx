@@ -107,7 +107,7 @@ export default function StarLifecycle() {
   // Loading screen
   if (isLoading) {
     return (
-      <div className="h-screen flex flex-col items-center justify-center bg-black text-white">
+      <div className="h-screen flex flex-col items-center justify-center">
         <StarBackground />
         <LoadingCircle />
       </div>
@@ -116,7 +116,7 @@ export default function StarLifecycle() {
 
   // Main content
   return (
-    <div className="flex flex-col items-center justify-center text-white">
+    <div className="flex flex-col items-center justify-center">
       <StarBackground />
       {/* Main content */}
       <div className="flex flex-col h-screen w-full z-10 items-center justify-center text-center py-32">

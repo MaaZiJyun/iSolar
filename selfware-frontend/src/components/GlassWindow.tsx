@@ -11,7 +11,7 @@ const GlassWindow: React.FC<GlassWindowProps> = ({ isOpen, onClose, children }) 
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center bg-black/45 backdrop-blur-xs z-50"
+      className="glass fixed inset-0 flex items-center justify-center backdrop-blur-xs z-50"
       onClick={onClose} // Close widget when clicking outside
     >
       <div

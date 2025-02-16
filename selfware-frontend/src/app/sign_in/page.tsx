@@ -67,10 +67,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative h-screen flex items-center justify-center bg-black overflow-hidden">
+    <div className="relative h-screen flex items-center justify-center overflow-hidden">
       <StarBackground />
-      <div className="relative z-10 bg-white/10 backdrop-blur-xs border border-white/30 shadow-lg p-8 rounded-xl w-full max-w-md">
-        <h1 className="text-3xl font-semibold text-white text-center mb-4">
+      <div className="bg-black-white-10 relative z-10 backdrop-blur-xs shadow-lg p-8 rounded-xl w-full max-w-md">
+        <h1 className="text-3xl font-semibold text-center mb-4">
           Login
         </h1>
 
@@ -97,7 +97,7 @@ export default function LoginPage() {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 bg-white/10 text-white placeholder-gray-300 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-4 py-2 bg-black-white-10 text-white border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
           <div className="flex flex-col space-y-1">
@@ -112,12 +112,12 @@ export default function LoginPage() {
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 bg-white/10 text-white placeholder-gray-300 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-4 py-2 bg-black-white-10 text-white border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded font-semibold focus:outline-none transition duration-200"
+            className="w-full bg-black-white-25 hover:bg-yellow-300 py-2 rounded font-semibold focus:outline-none transition duration-200"
             disabled={loading}
           >
             {loading ? "Logging in..." : "Login"}

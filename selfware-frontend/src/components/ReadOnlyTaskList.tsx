@@ -83,7 +83,7 @@ const ReadOnlyTaskList: React.FC<ReadOnlyTaskListProps> = ({ user, date }) => {
   };
 
   return (
-    <div className="text-white my-6 space-y-4">
+    <div className="my-6 space-y-4">
       {isLoading ? (
         <div>The data is loading</div>
       ) : (
