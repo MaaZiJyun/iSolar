@@ -141,7 +141,7 @@ const Cube: React.FC<CubeProps> = ({ order: key, user, cube }) => {
                   <div className="relative bg-black-white-10 rounded-lg h-6 m-2 block">
                     {/* Progress Bar Filler */}
                     <div
-                      className="h-6 bg-black-white-50 rounded-lg transition-all duration-300"
+                      className="h-6 bg-yellow-500 rounded-lg transition-all duration-300"
                       style={{ width: `${cube.percentage}%` }} // Added percentage symbol
                     ></div>
 

@@ -32,7 +32,7 @@ const Navbar: React.FC = () => {
       <div className="flex items-center justify-between max-w-7xl mx-auto">
         {/* Title */}
         <span
-          className="text-2xl font-bold cursor-pointer"
+          className="text-3xl font-bold cursor-pointer text-yellow-500"
           onClick={() => navigate("/")}
         >
           iSolar

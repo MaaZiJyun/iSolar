@@ -3,13 +3,17 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export default function StarBackground() {
+const StarBackground: React.FC = () => {
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null); // Canvas reference
   // Get CSS variables for background and foreground
   const rootStyles = getComputedStyle(document.documentElement);
-  const background = rootStyles.getPropertyValue("--background").trim() || "defaultBackground"; // Fallback value
-  const foreground = rootStyles.getPropertyValue("--foreground").trim() || "defaultForeground"; // Fallback value
+  const background =
+    rootStyles.getPropertyValue("--background").trim() || "defaultBackground"; // Fallback value
+  const foreground =
+    rootStyles.getPropertyValue("--foreground").trim() || "defaultForeground"; // Fallback value
   // Background animation (stars)
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -72,13 +76,15 @@ export default function StarBackground() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
   return (
     <>
-      {/* Background canvas */}
       <canvas
         ref={canvasRef}
         className="absolute top-0 left-0 w-full h-full -z-10"
       ></canvas>
     </>
   );
-}
+};
+
+export default StarBackground;

@@ -165,21 +165,24 @@ const SolarPanels: React.FC = () => {
     return (
       <div className="flex">
         <StarBackground />
-        <div className="w-full h-screen overflow-y-auto grid grid-cols-10 p-1">
-          {dates.map((date, index) => {
-            const key = calculateLifeDay(birthDate, date);
-            return (
-              <Cube
-                key={key}
-                order={key}
-                user={userData}
-                cube={cubeList[index]}
-              />
-            );
-          })}
+        <div className="w-full h-screen overflow-y-auto">
+          <div className="grid grid-cols-10 p-1">
+            {dates.map((date, index) => {
+              const key = calculateLifeDay(birthDate, date);
+              return (
+                <Cube
+                  key={key}
+                  order={key}
+                  user={userData}
+                  cube={cubeList[index]}
+                />
+              );
+            })}
+          </div>
+          <div className="h-12"></div>
         </div>
         <div
-          className="absolute bottom-0 p-5 bg-yellow-500 hover:bg-yellow-500 hover:text-white"
+          className="absolute flex w-full items-center justify-center bottom-0 bg-yellow-500 hover:bg-yellow-100 hover:text-yellow-500 hover:cursor-pointer"
           onClick={focusDate}
         >
           <SunIcon className="h-10 w-10" />

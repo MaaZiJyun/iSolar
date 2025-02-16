@@ -152,7 +152,7 @@ export default function RegisterPage() {
           ></textarea>
           <button
             type="submit"
-            className="w-full bg-black-white-50 hover:bg-yellow-300 py-2 rounded-lg font-medium focus:outline-none transition"
+            className="w-full bg-black-white-50 hover:bg-yellow-500 py-2 rounded-lg font-medium focus:outline-none transition"
           >
             Register
           </button>

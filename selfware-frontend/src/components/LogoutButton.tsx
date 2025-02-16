@@ -38,13 +38,13 @@ export default function LogoutButton() {
       </button>
 
       {showConfirm && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/45 backdrop-blur-xs z-50">
-          <div className="bg-white/20 p-6 rounded-md text-white shadow-lg">
+       <div className="bg-black-white-10 fixed h-screen w-full inset-0 flex items-center justify-center backdrop-blur-sm z-50">
+          <div className="w-1/3 bg-black-white-10 backdrop-blur-md p-6 rounded-xl shadow-lg">
             <p className="mb-4">Are you sure you want to logout?</p>
             <div className="flex justify-between space-x-4">
               <button
                 onClick={() => setShowConfirm(false)}
-                className="hover:bg-white hover:text-black text-white-600 border border-white px-2 py-1 rounded-md"
+                className="px-2 py-1 rounded-md"
               >
                 Cancel
               </button>

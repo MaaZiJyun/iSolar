@@ -3,76 +3,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import GlassWindow from "@/components/GlassWindow";
 import StarComponent from "@/components/StarComponent"; // Import the StarComponent
+import StarBackground from "@/components/StarBackground";
 
 export default function Home() {
   // States
   const [lifePercentage, setLifePercentage] = useState(100); // Remaining life percentage
   const [isWidgetOpen, setIsWidgetOpen] = useState(false); // Widget state
-  const canvasRef = useRef<HTMLCanvasElement | null>(null); // Canvas reference
-
-  // Background animation (stars)
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const stars: { x: number; y: number; radius: number }[] = [];
-    const numStars = 200;
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    // Generate stars
-    for (let i = 0; i < numStars; i++) {
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 2,
-      });
-    }
-
-    const drawStars = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "white";
-      stars.forEach((star) => {
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-        ctx.fill();
-      });
-    };
-
-    const updateStars = () => {
-      stars.forEach((star) => {
-        star.y += 0.5;
-        if (star.y > canvas.height) {
-          star.y = 0;
-          star.x = Math.random() * canvas.width;
-        }
-      });
-    };
-
-    const animate = () => {
-      drawStars();
-      updateStars();
-      requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    // Handle resizing
-    const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   // Countdown for lifePercentage every second
   useEffect(() => {
@@ -85,18 +21,15 @@ export default function Home() {
       });
     };
 
-    const timer = setInterval(decreaseLifePercentage, 1000); // Decrease every second
+    const timer = setInterval(decreaseLifePercentage, 2000); // Decrease every second
 
     return () => clearInterval(timer); // Cleanup function
   }, []); // Empty array to run once on mount
 
   return (
     <div>
-      <div className="relative h-screen bg-black text-white">
-        <canvas
-          ref={canvasRef}
-          className="absolute top-0 left-0 w-full h-full"
-        />
+      <div className="relative h-screen">
+        <StarBackground />
 
         {/* Star Component and Glass Window */}
         <div className="absolute top-0 left-0 w-full h-full z-10">
@@ -112,7 +45,7 @@ export default function Home() {
           </div>
         </div>
         {/* Text Container */}
-        <div className="flex h-full w-full items-center justify-center z-20 p-4 flex-col text-center relative bg-black/15 backdrop-blur-sm">
+        <div className="flex h-full w-full items-center justify-center z-20 p-4 flex-col text-center relative bg-black-white-10 backdrop-blur-sm">
           {/* Title and Introduction */}
           <div className="w-1/2">
             <h1 className="text-6xl font-bold mb-8">iSolar</h1>
@@ -128,7 +61,7 @@ export default function Home() {
       </div>
 
       {/* Introduction Page Content */}
-      <div className="flex flex-col py-12 text-black items-center justify-center">
+      <div className="flex flex-col items-center justify-center">
         <section className="max-w-4xl mt-8 text-left mx-auto">
           <p className="mb-12 leading-relaxed text-center">
             LifeStar is a unique application designed to inspire{" "}
@@ -153,75 +86,78 @@ export default function Home() {
         </section>
 
         {/* Key Features Section */}
-        <section className="mt-10 max-w-4xl">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
-            Key Features
-          </h2>
-          <ul className="list-disc list-inside text-gray-700 space-y-4">
-            <li>
-              <strong>Life Visualization as a Star:</strong> Your life is
-              symbolized as a star that gradually fades over time. The app uses
-              this visual representation to remind you of the impermanence of
-              life and inspire you to make the most of your moments.
-            </li>
-            <li>
-              <strong>Time Remaining Insights:</strong> Based on your age and
-              life expectancy, the app calculates and displays:
-              <ul className="list-disc list-inside ml-6">
-                <li>
-                  <strong>Days left</strong> in your life.
-                </li>
-                <li>
-                  <strong>Percentage of life lived vs. life remaining.</strong>
-                </li>
-              </ul>
-              This feature provides a stark yet motivating reminder of how
-              precious time is.
-            </li>
-            <li>
-              <strong>Daily Reflections:</strong> Prompts for{" "}
-              <strong>self-reflection</strong> to help you evaluate your
-              actions, achievements, and intentions for the day. Questions like:{" "}
-              <em>"Did I make today meaningful?"</em> or{" "}
-              <em>"What can I do better tomorrow?"</em>
-            </li>
-            <li>
-              <strong>Self-Improvement Goals:</strong> Encourages users to set
-              small, achievable goals for personal growth and track their
-              progress over time. Focuses on <strong>habit-building</strong> for
-              a more fulfilling life.
-            </li>
-            <li>
-              <strong>Milestone Reminders:</strong> Highlights significant
-              milestones in your life, helping you celebrate achievements and
-              reflect on past experiences.
-            </li>
-            <li>
-              <strong>Gentle Notifications:</strong> Sends periodic,
-              thought-provoking reminders like:
-              <ul className="list-disc list-inside ml-6">
-                <li>
-                  <em>
-                    "Your star is shining, but it won’t shine forever. What will
-                    you do today to make it brighter?"
-                  </em>
-                </li>
-                <li>
-                  <em>
-                    "Another day has passed. Did you live it meaningfully?"
-                  </em>
-                </li>
-              </ul>
-            </li>
-          </ul>
+        <section className="flex items-center justify-center mt-10 py-12 bg-black-white-10">
+          <div className="w-1/2">
+            <h2 className="text-2xl font-semibold mb-4 text-center">
+              Key Features
+            </h2>
+            <ul className="list-disc list-inside space-y-4">
+              <li>
+                <strong>Life Visualization as a Star:</strong> Your life is
+                symbolized as a star that gradually fades over time. The app
+                uses this visual representation to remind you of the
+                impermanence of life and inspire you to make the most of your
+                moments.
+              </li>
+              <li>
+                <strong>Time Remaining Insights:</strong> Based on your age and
+                life expectancy, the app calculates and displays:
+                <ul className="list-disc list-inside ml-6">
+                  <li>
+                    <strong>Days left</strong> in your life.
+                  </li>
+                  <li>
+                    <strong>
+                      Percentage of life lived vs. life remaining.
+                    </strong>
+                  </li>
+                </ul>
+                This feature provides a stark yet motivating reminder of how
+                precious time is.
+              </li>
+              <li>
+                <strong>Daily Reflections:</strong> Prompts for{" "}
+                <strong>self-reflection</strong> to help you evaluate your
+                actions, achievements, and intentions for the day. Questions
+                like: <em>"Did I make today meaningful?"</em> or{" "}
+                <em>"What can I do better tomorrow?"</em>
+              </li>
+              <li>
+                <strong>Self-Improvement Goals:</strong> Encourages users to set
+                small, achievable goals for personal growth and track their
+                progress over time. Focuses on <strong>habit-building</strong>{" "}
+                for a more fulfilling life.
+              </li>
+              <li>
+                <strong>Milestone Reminders:</strong> Highlights significant
+                milestones in your life, helping you celebrate achievements and
+                reflect on past experiences.
+              </li>
+              <li>
+                <strong>Gentle Notifications:</strong> Sends periodic,
+                thought-provoking reminders like:
+                <ul className="list-disc list-inside ml-6">
+                  <li>
+                    <em>
+                      "Your star is shining, but it won’t shine forever. What
+                      will you do today to make it brighter?"
+                    </em>
+                  </li>
+                  <li>
+                    <em>
+                      "Another day has passed. Did you live it meaningfully?"
+                    </em>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
         </section>
 
         {/* Why LifeStar Section */}
         <section className="mt-10 max-w-4xl text-center">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-            Why LifeStar?
-          </h2>
-          <p className="text-gray-700 leading-relaxed">
+          <h2 className="text-2xl font-semibold mb-4">Why LifeStar?</h2>
+          <p className="leading-relaxed">
             In today’s fast-paced world, it’s easy to lose sight of what truly
             matters. LifeStar seeks to bring{" "}
             <strong>clarity and purpose</strong> to your life by reminding you
@@ -234,10 +170,10 @@ export default function Home() {
 
         {/* Who Is It For Section */}
         <section className="mt-10 max-w-4xl">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
+          <h2 className="text-2xl font-semibold mb-4 text-center">
             Who Is It For?
           </h2>
-          <ul className="list-disc list-inside text-gray-700 space-y-4">
+          <ul className="list-disc list-inside space-y-4">
             <li>
               Individuals seeking <strong>personal growth</strong> and{" "}
               <strong>self-awareness</strong>.
@@ -259,28 +195,27 @@ export default function Home() {
 
         {/* Philosophy Section */}
         <section className="mt-10 max-w-4xl text-center">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+          <h2 className="text-2xl font-semibold mb-4">
             The Philosophy Behind LifeStar
           </h2>
-          <p className="text-gray-700 leading-relaxed">
+          <p className="leading-relaxed">
             The metaphor of the <strong>fading star</strong> is central to
             LifeStar's philosophy. Just as stars shine brightly in the night sky
             before they fade, humans have a finite amount of time to shine in
             their own way. By visualizing your life as a star, the app
             encourages you to:
           </p>
-          <ul className="list-disc list-inside text-gray-700 mt-4 space-y-2">
+          <ul className="list-disc list-inside mt-4 space-y-2">
             <li>Reflect on your past.</li>
             <li>Embrace the present.</li>
             <li>Plan for a meaningful future.</li>
           </ul>
-          <p className="text-gray-700 leading-relaxed mt-4">
+          <p className="leading-relaxed mt-4">
             LifeStar isn’t just an app; it’s a{" "}
             <strong>guide to living a reflective and intentional life</strong>.
           </p>
         </section>
       </div>
-      
     </div>
   );
 }
