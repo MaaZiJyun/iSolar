@@ -132,20 +132,18 @@ const ReadOnlyTaskList: React.FC<ReadOnlyTaskListProps> = ({ user, date }) => {
                       <span className="text-xs m-2 block">{task.remarks}</span>
                     </td>
 
-                    {/* Task Completion Bar */}
-                    <td className="text-white px-2 py-2">
-                      <div className="relative bg-white/45 rounded-lg h-6 m-2">
+                    <td className="text-white px-4 py-2">
+                      {/* Task Completion Bar */}
+                      <div className="relative bg-black-white-50 rounded-lg h-6 m-2 block">
                         {/* Progress Bar Filler */}
                         <div
-                          className="h-6 bg-green-400 rounded-lg transition-all duration-300"
+                          className="h-6 bg-yellow-500 rounded-lg transition-all duration-300"
                           style={{ width: `${task.completion}` }} // Added percentage symbol
                         ></div>
 
                         {/* Progress Text Overlay */}
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-white font-bold">
-                            {task.completion}
-                          </span>
+                          <span className="font-bold">{task.completion}</span>
                         </div>
                       </div>
                     </td>

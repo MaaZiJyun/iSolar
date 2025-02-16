@@ -166,7 +166,7 @@ const SolarPanels: React.FC = () => {
       <div className="flex">
         <StarBackground />
         <div className="w-full h-screen overflow-y-auto">
-          <div className="grid grid-cols-10 p-1">
+          <div className="grid grid-cols-10">
             {dates.map((date, index) => {
               const key = calculateLifeDay(birthDate, date);
               return (
@@ -182,7 +182,7 @@ const SolarPanels: React.FC = () => {
           <div className="h-12"></div>
         </div>
         <div
-          className="absolute flex w-full items-center justify-center bottom-0 bg-yellow-500 hover:bg-yellow-100 hover:text-yellow-500 hover:cursor-pointer"
+          className="absolute flex w-full items-center justify-center bottom-0 bg-yellow-500 hover:bg-white hover:text-yellow-500 hover:cursor-pointer"
           onClick={focusDate}
         >
           <SunIcon className="h-10 w-10" />

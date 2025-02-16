@@ -65,10 +65,12 @@ const Cube: React.FC<CubeProps> = ({ order: key, user, cube }) => {
       <>
         <div
           id={`${key}`}
-          className={`flex flex-col items-center justify-center aspect-square ${getBackgroundClass(
+          className={`m-1 flex flex-col items-center justify-center aspect-square ${getBackgroundClass(
             cube.date,
             currentDate
-          )} cursor-pointer transition duration-200 ease-in-out hover:bg-white/60 hover:text-black`}
+          )} cursor-pointer transition duration-200 ease-in-out rounded-xl hover:text-white hover:bg-yellow-500 ${
+            cube.id === -1 ? "" : "bg-black-white-50 backdrop-blur-sm shadow-sm"
+          }`}
           onClick={() => setIsWidgetOpen(true)}
         >
           {cube.date === currentDate ? (
@@ -80,10 +82,10 @@ const Cube: React.FC<CubeProps> = ({ order: key, user, cube }) => {
               <p className="text-xs">{cube.date}</p>
             </div>
           ) : (
-            <div className="flex flex-col items-center opacity-45">
+            <div className="flex flex-col items-center opacity-50">
               {cube.id === -1 ? (
                 <>
-                  <p className="text-3xl">EMPTY</p>
+                  <p className="text-6xl">∅</p>
                   <p className="text-xs">{cube.date}</p>
                 </>
               ) : (
@@ -99,8 +101,8 @@ const Cube: React.FC<CubeProps> = ({ order: key, user, cube }) => {
           )}
         </div>
         {isWidgetOpen && (
-          <div className="bg-black-white-10 fixed h-full w-full inset-0 flex items-center justify-center backdrop-blur-sm z-50">
-            <div className="w-2/3 bg-white/20 backdrop-blur-md p-6 rounded-xl shadow-lg">
+          <div className="bg-black-white-10 fixed h-full w-full inset-0 flex items-center justify-center backdrop-blur-xs z-50">
+            <div className="flex w-2/3 bg-black-white-10 backdrop-blur-md p-6 rounded-xl shadow-lg">
               <div>
                 <div className="flex items-center justify-between">
                   <div>
@@ -138,7 +140,7 @@ const Cube: React.FC<CubeProps> = ({ order: key, user, cube }) => {
                     <ReadOnlyTaskList user={user} date={cube.date} />
                   )}
                   {/* <div>{cube.percentage}</div> */}
-                  <div className="relative bg-black-white-10 rounded-lg h-6 m-2 block">
+                  <div className="relative bg-black-white-50 rounded-lg h-6 m-2 block">
                     {/* Progress Bar Filler */}
                     <div
                       className="h-6 bg-yellow-500 rounded-lg transition-all duration-300"

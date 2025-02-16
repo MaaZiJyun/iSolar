@@ -253,28 +253,32 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
 
   return (
     <div className="my-6 space-y-4">
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center justify-center space-x-2">
         <div className="flex-grow">
-          <label htmlFor="newTaskName" className="text-sm">Task Title</label>
+          <label htmlFor="newTaskName" className="text-sm">
+            Task Title
+          </label>
           <input
             type="text"
             value={newTaskName}
             onChange={(e) => setNewTaskName(e.target.value)}
             // placeholder="Task Name"
-            className="bg-black-white-10 mr-2 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            className="bg-black-white-50 mr-2 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
           />
         </div>
         <div className="flex-grow">
-          <label htmlFor="newTaskName" className="text-sm">Remarks</label>
+          <label htmlFor="newTaskName" className="text-sm">
+            Remarks
+          </label>
           <input
             type="text"
             value={newTaskRemarks}
             onChange={(e) => setNewTaskRemarks(e.target.value)}
             // placeholder="Remarks"
-            className="bg-black-white-10 mr-2 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            className="bg-black-white-50 mr-2 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
           />
         </div>
-        <div className="flex">
+        <div className="flex items-center justify-center">
           <button
             onClick={() => {
               insertNewTaskToDB(newTaskName, newTaskRemarks);
@@ -282,13 +286,19 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
             className="p-2 rounded"
           >
             <PlusIcon className="h-6 w-6" />
+            <label htmlFor="newTaskName" className="text-sm">
+              Add
+            </label>
           </button>
           {taskList.length < 1 && (
             <button
               onClick={() => importFrequentTaskList()}
               className="p-2 rounded"
             >
-              <ClockIcon className="h-6 w-6" />
+              <ArrowDownTrayIcon className="h-6 w-6" />
+              <label htmlFor="newTaskName" className="text-sm">
+                Import
+              </label>
             </button>
           )}
         </div>
@@ -391,7 +401,7 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
                           </button>
                         </div>
                       ) : (
-                        <div className="relative bg-black-white-10 rounded-lg h-6 m-2 block">
+                        <div className="relative bg-black-white-50 rounded-lg h-6 m-2 block">
                           {/* Progress Bar Filler */}
                           <div
                             className="h-6 bg-yellow-500 rounded-lg transition-all duration-300"
