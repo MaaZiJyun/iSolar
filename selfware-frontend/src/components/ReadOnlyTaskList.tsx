@@ -96,9 +96,6 @@ const ReadOnlyTaskList: React.FC<ReadOnlyTaskListProps> = ({ user, date }) => {
             <table className="w-full border-b">
               <thead>
                 <tr className="border-b">
-                  {/* <th className="text-left px-4 py-2 text-white font-bold">
-                    <span className="m-2 block">ID</span>
-                  </th> */}
                   <th className="text-left px-4 py-2 font-bold">
                     <span className="m-2 block">Name</span>
                   </th>
