@@ -155,7 +155,7 @@ export default function StarLifecycle() {
           {timeLeft && `${formatTime(timeLeft)}`}
         </h1>
 
-        <div className="my-8">
+        <div className="my-6">
           <StarComponent lifePercentage={lifePercentage} />
         </div>
 

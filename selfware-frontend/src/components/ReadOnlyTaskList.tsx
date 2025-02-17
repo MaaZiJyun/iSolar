@@ -83,7 +83,7 @@ const ReadOnlyTaskList: React.FC<ReadOnlyTaskListProps> = ({ user, date }) => {
   };
 
   return (
-    <div className="my-6 space-y-4">
+    <div className=" h-96 overflow-y-auto">
       {isLoading ? (
         <div>The data is loading</div>
       ) : (
@@ -93,22 +93,22 @@ const ReadOnlyTaskList: React.FC<ReadOnlyTaskListProps> = ({ user, date }) => {
               You wasted your life
             </div>
           ) : (
-            <table className="min-w-full border-b">
+            <table className="w-full border-b">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left px-4 py-2 text-white font-bold">
+                  {/* <th className="text-left px-4 py-2 text-white font-bold">
                     <span className="m-2 block">ID</span>
-                  </th>
-                  <th className="text-left px-4 py-2 text-white font-bold">
+                  </th> */}
+                  <th className="text-left px-4 py-2 font-bold">
                     <span className="m-2 block">Name</span>
                   </th>
-                  <th className="text-left px-4 py-2 text-white font-bold">
+                  <th className="text-left px-4 py-2 font-bold">
                     <span className="m-2 block">Remarks</span>
                   </th>
-                  <th className="text-left px-4 py-2 text-white font-bold">
+                  <th className="text-left px-4 py-2 font-bold">
                     <span className="m-2 block">Completion</span>
                   </th>
-                  <th className="text-left px-4 py-2 text-white font-bold">
+                  <th className="text-left px-4 py-2 font-bold">
                     <span className="m-2 block">Mark</span>
                   </th>
                 </tr>
@@ -117,23 +117,15 @@ const ReadOnlyTaskList: React.FC<ReadOnlyTaskListProps> = ({ user, date }) => {
               <tbody>
                 {taskList.map((task) => (
                   <tr key={task.id} className="hover:bg-white/15">
-                    {/* Task ID */}
-                    <td className="text-white px-4 py-2">
-                      <span className="m-2 block">{task.id}</span>
-                    </td>
-
-                    {/* Task Name */}
-                    <td className="text-white px-4 py-2">
+                    <td className="px-4 py-2">
                       <span className="m-2 block">{task.name}</span>
                     </td>
-
-                    {/* Task Remarks */}
-                    <td className="text-white px-4 py-2">
+                    <td className="px-4 py-2">
                       <span className="text-xs m-2 block">{task.remarks}</span>
                     </td>
+                    {/* Task Completion Bar */}
 
-                    <td className="text-white px-4 py-2">
-                      {/* Task Completion Bar */}
+                    <td className="px-4 py-2">
                       <div className="relative bg-black-white-50 rounded-lg h-6 m-2 block">
                         {/* Progress Bar Filler */}
                         <div
@@ -147,10 +139,10 @@ const ReadOnlyTaskList: React.FC<ReadOnlyTaskListProps> = ({ user, date }) => {
                         </div>
                       </div>
                     </td>
-
-                    {/* Task Mark */}
-                    <td className="text-white px-4 py-2">
-                      <span className="m-2 block">{task.mark}</span>
+                    <td className="px-4 py-2">
+                      <span className="m-2 block">
+                        {task.mark === "Failure" ? "None" : task.mark}
+                      </span>
                     </td>
                   </tr>
                 ))}

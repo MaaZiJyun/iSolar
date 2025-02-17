@@ -429,8 +429,8 @@ const ChatPage = () => {
               <div
                 className={`rounded-lg px-4 py-2 ${
                   message.sender === "system"
-                    ? "bg-white/40 text-gray-200"
-                    : "bg-white/80 text-black"
+                    ? "bg-black-white-75"
+                    : "bg-yellow-500 text-white"
                 }`}
               >
                 {message.text}
