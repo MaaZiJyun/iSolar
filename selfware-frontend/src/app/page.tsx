@@ -34,7 +34,7 @@ export default function Home() {
         {/* Star Component and Glass Window */}
         <div className="absolute top-0 left-0 w-full h-full z-10">
           <div className="flex h-full w-full items-center justify-center">
-            <StarComponent lifePercentage={lifePercentage} />
+            <StarComponent lifePercentage={lifePercentage} sizeChange={true} />
             <GlassWindow
               isOpen={isWidgetOpen}
               onClose={() => setIsWidgetOpen(false)}

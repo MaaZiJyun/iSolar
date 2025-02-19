@@ -2,20 +2,34 @@
 @keyframes openingColorChange {
 
   0% {
-    background-color: #fff;
-    color: #000;
+    background-color: #34bfa3;
+    /* color: #000; */
+    /* #9 */
+  }
+
+
+  25% {
+    background-color: #ffcc00;
+    /* color: #000; */
     /* #9 */
   }
 
   50% {
-    background-color: #000;
-    color: #fff;
+    background-color: #ff677d;
+    /* color: #fff; */
     /* #10 */
   }
 
+
+  75% {
+    background-color: #ffcc00;
+    /* color: #000; */
+    /* #9 */
+  }
+
   100% {
-    background-color: #fff;
-    color: #000;
+    background-color: #34bfa3;
+    /* color: #000; */
     /* Loop back to start */
   }
 }

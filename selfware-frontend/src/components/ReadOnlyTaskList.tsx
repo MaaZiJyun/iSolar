@@ -85,12 +85,14 @@ const ReadOnlyTaskList: React.FC<ReadOnlyTaskListProps> = ({ user, date }) => {
   return (
     <div className=" h-96 overflow-y-auto">
       {isLoading ? (
-        <div>The data is loading</div>
+        <div className="flex w-full h-full items-center justify-center text-lg">
+          Loading
+        </div>
       ) : (
         <>
           {taskList.length < 1 ? (
-            <div className="flex items-center justify-center text-lg">
-              You wasted your life
+            <div className="flex w-full h-full items-center justify-center text-lg">
+              There is nothing left UwU
             </div>
           ) : (
             <table className="w-full border-b">
@@ -113,7 +115,7 @@ const ReadOnlyTaskList: React.FC<ReadOnlyTaskListProps> = ({ user, date }) => {
 
               <tbody>
                 {taskList.map((task) => (
-                  <tr key={task.id} className="hover:bg-white/15">
+                  <tr key={task.id} className={`hover:bg-white/15 ${task.mark === 'Failure' && 'text-red-500'}`}>
                     <td className="px-4 py-2">
                       <span className="m-2 block">{task.name}</span>
                     </td>
@@ -136,9 +138,9 @@ const ReadOnlyTaskList: React.FC<ReadOnlyTaskListProps> = ({ user, date }) => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-2">
+                    <td className={`px-4 py-2`}>
                       <span className="m-2 block">
-                        {task.mark === "Failure" ? "None" : task.mark}
+                        {task.mark}
                       </span>
                     </td>
                   </tr>

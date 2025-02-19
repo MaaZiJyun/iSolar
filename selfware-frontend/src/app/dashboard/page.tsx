@@ -66,6 +66,7 @@ export default function StarLifecycle() {
         ((totalDays - daysLived) / totalDays) * 100
       );
       setLifePercentage(remainingPercentage);
+      console.log("remainingPercentage", remainingPercentage);
 
       const interval = setInterval(() => {
         setTimeLeft(calculateTimeLeft());
@@ -148,23 +149,32 @@ export default function StarLifecycle() {
       <StarBackground />
       {/* Main content */}
       <div className="flex flex-col h-screen w-full z-10 items-center justify-center text-center py-32">
-        <p className="text-lg mb-2">
-          [The star has been running {elapsedTime}]
+        <p className="text-md mb-2">
+          Number of days remaining before the star demise:
         </p>
-        <h1 className="text-6xl text-yellow-500 font-bold mb-8">
+        <h1 className="text-6xl text-yellow-500 font-bold mb-8 z-50">
           {timeLeft && `${formatTime(timeLeft)}`}
         </h1>
 
-        <div className="my-6">
-          <StarComponent lifePercentage={lifePercentage} />
+        <div
+          className="my-6 hover:cursor-pointer"
+          onClick={() => setIsWidgetOpen(true)}
+        >
+          <StarComponent lifePercentage={lifePercentage} sizeChange={true} />
         </div>
 
-        <p className="text-3xl mt-8">Current Stage: {prop.name}</p>
+        <p className="text-3xl mt-8">Stage {prop.name}</p>
         <p className="mt-4 text-lg">Remaining: {lifePercentage.toFixed(1)}%</p>
       </div>
       <GlassWindow isOpen={isWidgetOpen} onClose={() => setIsWidgetOpen(false)}>
-        <h2 className="text-2xl font-bold mb-4">恒星详情</h2>
-        <p>这是一个关于恒星生命周期的详细信息窗口。</p>
+        <h2 className="text-2xl mb-8">
+          Hello There,{" "}
+          <span className="text-yellow-500 font-bold">{userData?.username}</span>
+        </h2>
+        <p>Email: {userData?.email}</p>
+        <p>Date of Birth: {birthDate.toString().split('T')[0]}</p>
+        <p>Bio: {userData?.bio}</p>
+        <p className="text-sm mt-4">Your star has been running {elapsedTime}</p>
       </GlassWindow>
 
       {/* <div className="h-screen w-full relative z-10 text-center py-32 bg-white"><p>这是一个关于恒星生命周期的详细信息窗口。</p></div> */}

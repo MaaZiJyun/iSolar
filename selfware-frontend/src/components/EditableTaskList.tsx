@@ -33,31 +33,60 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
   const [newTaskRemarks, setNewTaskRemarks] = useState<string>("");
   const [editIndex, setEditIndex] = useState<number | null>(null); // Track which task is in edit mode
 
-  const DailyTaskList: { name: string; remark: string }[] = [
-    { name: "Eat on time", remark: "Including breakfast, lunch and dinner" },
-    { name: "Sleep on time", remark: "Sleep and wake up early" },
+  interface NewTask {
+    name: string;
+    remarks: string;
+  }
+
+  const dailyTaskList: NewTask[] = [
+    { name: "Eat on time", remarks: "Including breakfast, lunch and dinner" },
+    { name: "Sleep on time", remarks: "Sleep and wake up early" },
     {
       name: "Drinking Water",
-      remark: "At least 8 cups of water need to be consumed daily",
+      remarks: "At least 8 cups of water need to be consumed daily",
     },
-    { name: "Studying", remark: "Learn something new everyday" },
-    { name: "Communication", remark: "Talk to people around" },
-    { name: "Reading", remark: "Read books or papers" },
-    { name: "Violin", remark: "Need to practice playing violin everyday" },
-    { name: "Exercise", remark: "Need to do exercise" },
-    { name: "Writing", remark: "Write down the ideas and thought for today" },
-    { name: "Reflection", remark: "Review what you have done today" },
+    { name: "Studying", remarks: "Learn something new everyday" },
+    { name: "Communication", remarks: "Talk to people around" },
+    { name: "Reading", remarks: "Read books or papers" },
+    { name: "Violin", remarks: "Need to practice playing violin everyday" },
+    { name: "Exercise", remarks: "Need to do exercise" },
+    { name: "Writing", remarks: "Write down the ideas and thought for today" },
+    { name: "Reflection", remarks: "Review what you have done today" },
   ];
 
   useEffect(() => {
     getTasksByDateFromDB(newTaskDate, user.id);
   }, [newTaskDate, user.id]);
 
-  const importFrequentTaskList = () => {
-    DailyTaskList.forEach(async (task) => {
-      await insertNewTaskToDB(task.name, task.remark);
-      console.log(`adding ${task.name}`);
-    });
+  const importFrequentTaskList = async (list: NewTask[]) => {
+    setIsLoading(true);
+    const newTasks: TaskClass[] = [];
+    await Promise.all(
+      list.map(async (task) => {
+        if (task.name && task.remarks) {
+          const resTask = await insertNewTaskToDB(task.name, task.remarks);
+          if (resTask) {
+            newTasks.push(resTask);
+          }
+        }
+      })
+    );
+    const updateTasks: TaskClass[] = [...taskList, ...newTasks];
+    console.log(updateTasks);
+    setTaskList(updateTasks);
+    setIsLoading(false);
+  };
+
+  const submitNewTaskList = async (name: string, remarks: string) => {
+    setIsLoading(true);
+    const newTask = await insertNewTaskToDB(name, remarks);
+    if (newTask) {
+      const updatedTasks = [...taskList, newTask];
+      setTaskList(updatedTasks);
+    }
+    // Reset the form inputs for the new task
+    resetNewTaskInputs();
+    setIsLoading(false);
   };
 
   const getTasksByDateFromDB = async (date: string, userId: string) => {
@@ -163,7 +192,7 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
   const insertNewTaskToDB = async (
     newTaskName: string,
     newTaskRemarks: string
-  ) => {
+  ): Promise<TaskClass | undefined> => {
     // Create a new task instance with a temporary placeholder ID (-1)
     const newTask = new TaskClass(
       -1, // Placeholder ID (will be updated after backend response)
@@ -191,14 +220,8 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
       // Update the task object with the real ID from the backend
       newTask.id = data.taskId;
 
-      // Update the task list with the new task
-      const updatedTasks = [...taskList, newTask];
-      setTaskList(updatedTasks);
-
-      // Reset the form inputs for the new task
-      resetNewTaskInputs();
-
-      console.log("Task added successfully:", newTask);
+      // console.log("Task added successfully:", newTask);
+      return newTask;
     } catch (error) {
       console.error("Error adding task:", error);
       alert("Failed to add task. Please try again.");
@@ -279,184 +302,216 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
           />
         </div>
         <div className="flex items-center justify-center">
-          <button
-            onClick={() => {
-              insertNewTaskToDB(newTaskName, newTaskRemarks);
-            }}
-            className="p-2 rounded"
-          >
-            <PlusIcon className="h-6 w-6" />
-            <label htmlFor="newTaskName" className="text-sm">
-              Add
-            </label>
-          </button>
-          {taskList.length < 1 && (
-            <button
-              onClick={() => importFrequentTaskList()}
-              className="p-2 rounded"
-            >
-              <ArrowDownTrayIcon className="h-6 w-6" />
-              <label htmlFor="newTaskName" className="text-sm">
-                Import
-              </label>
-            </button>
+          {isLoading ? (
+            <>
+              <div className="p-2 rounded text-gray-300">
+                <PlusIcon className="h-6 w-6" />
+                <label htmlFor="newTaskName" className="text-sm">
+                  Add
+                </label>
+              </div>
+              {taskList.length < 1 && (
+                <div className="p-2 rounded text-gray-300">
+                  <ArrowDownTrayIcon className="h-6 w-6" />
+                  <label htmlFor="newTaskName" className="text-sm">
+                    Import
+                  </label>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => submitNewTaskList(newTaskName, newTaskRemarks)}
+                className="p-2 rounded"
+              >
+                <PlusIcon className="h-6 w-6" />
+                <label htmlFor="newTaskName" className="text-sm">
+                  Add
+                </label>
+              </button>
+              {taskList.length < 1 && (
+                <button
+                  onClick={() => importFrequentTaskList(dailyTaskList)}
+                  className="p-2 rounded"
+                >
+                  <ArrowDownTrayIcon className="h-6 w-6" />
+                  <label htmlFor="newTaskName" className="text-sm">
+                    Import
+                  </label>
+                </button>
+              )}
+            </>
           )}
         </div>
       </div>
-      {isLoading ? (
-        <div>The data is loading</div>
-      ) : (
-        <div className=" h-96 overflow-y-auto">
-          {taskList.length > 0 && (
-            <table className="w-full border-b">
-              <thead>
-                <tr className="border-b">
-                  {/* <th className="text-left px-4 py-2 text-white font-bold">
-                    <span className="m-2 block">ID</span>
-                  </th> */}
-                  <th className="text-left px-4 py-2 font-bold">
-                    <span className="m-2 block">Name</span>
-                  </th>
-                  <th className="text-left px-4 py-2 font-bold">
-                    <span className="m-2 block">Remarks</span>
-                  </th>
-                  <th className="text-left px-4 py-2 font-bold">
-                    <span className="m-2 block">Completion</span>
-                  </th>
-                  <th className="text-left px-4 py-2 font-bold">
-                    <span className="m-2 block">Mark</span>
-                  </th>
-                  <th className="text-left px-4 py-2 font-bold">
-                    <span className="m-2 block">Actions</span>
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {taskList.map((task) => (
-                  <tr key={task.id} className="hover:bg-white/15">
-                    <td className="px-4 py-2">
-                      {editIndex === task.id ? (
-                        <input
-                          type="text"
-                          value={task.name}
-                          onChange={(e) =>
-                            handleTaskChange(task.id, { name: e.target.value })
-                          }
-                          className="w-full bg-transparent m-2 block" // Set input background to transparent
-                        />
-                      ) : (
-                        <span className="m-2 block">{task.name}</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-2">
-                      {editIndex === task.id ? (
-                        <input
-                          type="text"
-                          value={task.remarks ?? ""}
-                          onChange={(e) =>
-                            handleTaskChange(task.id, {
-                              remarks: e.target.value,
-                            })
-                          }
-                          className="w-full bg-transparent m-2 block" // Set input background to transparent
-                        />
-                      ) : (
-                        <span className="text-xs m-2 block">
-                          {task.remarks}
-                        </span>
-                      )}
-                    </td>
-                    {/* Task Completion Bar */}
-
-                    <td className="px-4 py-2">
-                      {editIndex === task.id ? (
-                        <div className="flex w-full space-x-2 m-2">
-                          <button
-                            className="hover:text-red-500"
-                            onClick={() => {
-                              handleTaskChange(task.id, { completion: "0%" });
-                              setEditIndex(null);
-                            }}
-                          >
-                            <Battery0Icon className="h-6 w-6" />
-                          </button>
-                          <button
-                            className="hover:text-yellow-500"
-                            onClick={() => {
-                              handleTaskChange(task.id, { completion: "50%" });
-                              setEditIndex(null);
-                            }}
-                          >
-                            <Battery50Icon className="h-6 w-6" />
-                          </button>
-                          <button
-                            className="hover:text-green-500"
-                            onClick={() => {
-                              handleTaskChange(task.id, { completion: "100%" });
-                              setEditIndex(null);
-                            }}
-                          >
-                            <Battery100Icon className="h-6 w-6" />
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="relative bg-black-white-50 rounded-lg h-6 m-2 block">
-                          {/* Progress Bar Filler */}
-                          <div
-                            className="h-6 bg-yellow-500 rounded-lg transition-all duration-300"
-                            style={{ width: `${task.completion}` }} // Added percentage symbol
-                          ></div>
-
-                          {/* Progress Text Overlay */}
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <span className="font-bold">{task.completion}</span>
-                          </div>
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-4 py-2">
-                      <span className="m-2 block">
-                        {task.mark === "Failure" ? "None" : task.mark}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2">
-                      {editIndex === task.id ? (
-                        <>
-                          {isUpdating ? (
-                            <>
-                              <div className="flex space-x-2">
-                                <ArrowUturnLeftIcon className="h-6 w-6" />
-
-                                <TrashIcon className="h-6 w-6" />
-                              </div>
-                            </>
-                          ) : (
-                            <div className="flex space-x-2 m-2 block">
-                              <button onClick={() => toggleEdit(task.id)}>
-                                <ArrowUturnLeftIcon className="h-6 w-6 text-blue-500" />
-                              </button>
-                              <button onClick={() => clickDelete(task.id)}>
-                                <TrashIcon className="h-6 w-6 text-red-500" />
-                              </button>
-                            </div>
-                          )}
-                        </>
-                      ) : (
-                        <div className="m-2 block">
-                          <button onClick={() => toggleEdit(task.id)}>
-                            <PencilSquareIcon className="h-6 w-6" />
-                          </button>
-                        </div>
-                      )}
-                    </td>
+      <div className=" h-96 overflow-y-auto">
+        {isLoading ? (
+          <div className="flex w-full h-full items-center justify-center text-lg">
+            Loading
+          </div>
+        ) : (
+          <>
+            {taskList.length < 1 ? (
+              <div className="flex w-full h-full items-center justify-center text-lg">
+                Haven't plan anything yet UwU
+              </div>
+            ) : (
+              <table className="w-full border-b">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left px-4 py-2 font-bold">
+                      <span className="m-2 block">Name</span>
+                    </th>
+                    <th className="text-left px-4 py-2 font-bold">
+                      <span className="m-2 block">Remarks</span>
+                    </th>
+                    <th className="text-left px-4 py-2 font-bold">
+                      <span className="m-2 block">Completion</span>
+                    </th>
+                    <th className="text-left px-4 py-2 font-bold">
+                      <span className="m-2 block">Mark</span>
+                    </th>
+                    <th className="text-left px-4 py-2 font-bold">
+                      <span className="m-2 block">Actions</span>
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-      )}
+                </thead>
+
+                <tbody>
+                  {taskList.map((task) => (
+                    <tr key={task.id} className="hover:bg-white/15">
+                      <td className="px-4 py-2">
+                        {editIndex === task.id ? (
+                          <input
+                            type="text"
+                            value={task.name}
+                            onChange={(e) =>
+                              handleTaskChange(task.id, {
+                                name: e.target.value,
+                              })
+                            }
+                            className="w-full bg-transparent m-2 block" // Set input background to transparent
+                          />
+                        ) : (
+                          <span className="m-2 block">{task.name}</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-2">
+                        {editIndex === task.id ? (
+                          <input
+                            type="text"
+                            value={task.remarks ?? ""}
+                            onChange={(e) =>
+                              handleTaskChange(task.id, {
+                                remarks: e.target.value,
+                              })
+                            }
+                            className="w-full bg-transparent m-2 block" // Set input background to transparent
+                          />
+                        ) : (
+                          <span className="text-xs m-2 block">
+                            {task.remarks}
+                          </span>
+                        )}
+                      </td>
+                      {/* Task Completion Bar */}
+
+                      <td className="px-4 py-2">
+                        {editIndex === task.id ? (
+                          <div className="flex w-full space-x-2 m-2">
+                            <button
+                              className="hover:text-red-500"
+                              onClick={() => {
+                                handleTaskChange(task.id, { completion: "0%" });
+                                setEditIndex(null);
+                              }}
+                            >
+                              <Battery0Icon className="h-6 w-6" />
+                            </button>
+                            <button
+                              className="hover:text-yellow-500"
+                              onClick={() => {
+                                handleTaskChange(task.id, {
+                                  completion: "50%",
+                                });
+                                setEditIndex(null);
+                              }}
+                            >
+                              <Battery50Icon className="h-6 w-6" />
+                            </button>
+                            <button
+                              className="hover:text-green-500"
+                              onClick={() => {
+                                handleTaskChange(task.id, {
+                                  completion: "100%",
+                                });
+                                setEditIndex(null);
+                              }}
+                            >
+                              <Battery100Icon className="h-6 w-6" />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="relative bg-black-white-50 rounded-lg h-6 m-2 block">
+                            {/* Progress Bar Filler */}
+                            <div
+                              className="h-6 bg-yellow-500 rounded-lg transition-all duration-300"
+                              style={{ width: `${task.completion}` }} // Added percentage symbol
+                            ></div>
+
+                            {/* Progress Text Overlay */}
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <span className="font-bold">
+                                {task.completion}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-4 py-2">
+                        <span className="m-2 block">
+                          {task.mark === "Failure" ? "None" : task.mark}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2">
+                        {editIndex === task.id ? (
+                          <>
+                            {isUpdating ? (
+                              <>
+                                <div className="flex space-x-2">
+                                  <ArrowUturnLeftIcon className="h-6 w-6" />
+
+                                  <TrashIcon className="h-6 w-6" />
+                                </div>
+                              </>
+                            ) : (
+                              <div className="flex space-x-2 m-2 block">
+                                <button onClick={() => toggleEdit(task.id)}>
+                                  <ArrowUturnLeftIcon className="h-6 w-6 text-blue-500" />
+                                </button>
+                                <button onClick={() => clickDelete(task.id)}>
+                                  <TrashIcon className="h-6 w-6 text-red-500" />
+                                </button>
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <div className="m-2 block">
+                            <button onClick={() => toggleEdit(task.id)}>
+                              <PencilSquareIcon className="h-6 w-6" />
+                            </button>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 };

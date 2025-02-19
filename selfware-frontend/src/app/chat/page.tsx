@@ -186,7 +186,7 @@ const ChatPage = () => {
     //   askForGrade(newIndex); // Pass the new index if needed
     //   return newIndex;
     // });
-    askForMark(currentTaskIndex)
+    askForMark(currentTaskIndex);
   };
   const handleMark = (mark: number) => {
     const resultMap = new Map<number, string>([
@@ -205,7 +205,13 @@ const ChatPage = () => {
       existingTask.date,
       existingTask.remarks,
       existingTask.completion,
-      resultMap.get(mark) as "" | "Failure" | "Pass" | "Satisfactory" | "Good" | "Excellent" || existingTask.mark
+      (resultMap.get(mark) as
+        | ""
+        | "Failure"
+        | "Pass"
+        | "Satisfactory"
+        | "Good"
+        | "Excellent") || existingTask.mark
     );
     updateTaskByIdFromDB(updatedTasks[currentTaskIndex]);
     setTaskList(updatedTasks);
@@ -268,11 +274,22 @@ const ChatPage = () => {
       // Convert completion strings to numbers and calculate the total percentage
       var totalPercentage = 0;
       tasklist.forEach((t) => {
-        totalPercentage += parseInt(t.completion.replace("%", ""), 10);
+        const n = parseInt(t.completion.replace("%", ""), 10);
+        if (t.mark === "Failure") {
+          totalPercentage += n;
+        } else if (t.mark === "Pass") {
+          totalPercentage += n * 2;
+        } else if (t.mark === "Satisfactory") {
+          totalPercentage += n * 3;
+        } else if (t.mark === "Good") {
+          totalPercentage += n * 4;
+        } else if (t.mark === "Excellent") {
+          totalPercentage += n * 5;
+        }
       });
-      const averagePercentage = totalPercentage / tasklist.length;
+      const averagePercentage = totalPercentage / (tasklist.length * 4);
       console.log(
-        `${averagePercentage} = ${totalPercentage} / ${tasklist.length}`
+        `${averagePercentage} = ${totalPercentage} / ${tasklist.length * 4}`
       );
 
       // Return the average percentage as a properly formatted string (e.g., "60%")

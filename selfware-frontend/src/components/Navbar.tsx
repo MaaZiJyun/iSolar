@@ -44,20 +44,20 @@ const Navbar: React.FC = () => {
             className="hover:text-yellow-400 transition"
             onClick={() => navigate("/dashboard")}
           >
-            Dashboard
+            Solar Status
           </button>
           <button
             className="hover:text-yellow-400 transition"
             onClick={() => navigate("/solar-panels")}
           >
-            Power Station
+            Solar Panels
           </button>
-          {/* <button
+          <button
             className="hover:text-yellow-400 transition"
-            onClick={() => navigate("/solar-system")}
+            onClick={() => navigate("/solar-orbits")}
           >
-            Solar System
-          </button> */}
+            Solar Orbits
+          </button>
         </div>
 
         {/* Logout Button */}

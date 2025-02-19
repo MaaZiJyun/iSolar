@@ -44,19 +44,22 @@ const Cube: React.FC<CubeProps> = ({ order: key, user, cube }) => {
     if (date === currentDate && cube.percentage === 0) {
       return "opening-bg"; // Apply animation class for current date
     } else {
-      return getColorByPercentage(cube.percentage); // Highlight selected date
+      if (cube.id !== -1) {
+        return getColorByPercentage(cube.percentage); // Highlight selected date
+      }
     }
   };
 
   const getColorByPercentage = (percentage: number): string => {
+    console.log(percentage);
     if (percentage >= 75) {
-      return "text-green-500"; // Almost complete
+      return "text-green-500 bg-green-500/20"; // Almost complete
     } else if (percentage >= 50) {
-      return "text-yellow-500"; // Halfway
+      return "text-yellow-500 bg-yellow-500/20"; // Halfway
     } else if (percentage >= 25) {
-      return "text-orange-500"; // Making progress
+      return "text-orange-500 bg-orange-500/20"; // Making progress
     } else {
-      return "text-red-500"; // Very little progress
+      return "text-red-500 bg-red-500/20"; // Very little progress
     }
   };
 
@@ -69,17 +72,14 @@ const Cube: React.FC<CubeProps> = ({ order: key, user, cube }) => {
             cube.date,
             currentDate
           )} cursor-pointer transition duration-200 ease-in-out rounded-xl hover:text-white hover:bg-yellow-500 ${
-            cube.id === -1 ? "" : "bg-black-white-50 backdrop-blur-sm shadow-sm"
+            cube.id !== -1 && "backdrop-blur-sm shadow-sm"
           }`}
           onClick={() => setIsWidgetOpen(true)}
         >
           {cube.date === currentDate ? (
             <div className="flex flex-col items-center">
-              <p className="text-4xl">
-                {cube.percentage.toFixed(1)}
-                <span className="text-sm">%</span>
-              </p>
-              <p className="text-xs">{cube.date}</p>
+              <p className="text-3xl mt-6">▔＾▔</p>
+              <p className="text-xs">TODAY</p>
             </div>
           ) : (
             <div className="flex flex-col items-center opacity-50">

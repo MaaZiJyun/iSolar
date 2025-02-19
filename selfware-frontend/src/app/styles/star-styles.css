@@ -25,7 +25,11 @@
   /* To handle glow effect */
   display: inline-block;
   /* Allow size adjustments */
-  animation: breath 10s linear infinite; 
+  animation: breath 10s linear infinite;
+}
+
+.emoji {
+  transition: font-size 10s ease
 }
 
 .glow {

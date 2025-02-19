@@ -11,16 +11,16 @@ const GlassWindow: React.FC<GlassWindowProps> = ({ isOpen, onClose, children }) 
 
   return (
     <div
-      className="glass fixed inset-0 flex items-center justify-center backdrop-blur-xs z-50"
+      className="bg-black-white-10 fixed h-full w-full inset-0 flex items-center justify-center backdrop-blur-xs z-50"
       onClick={onClose} // Close widget when clicking outside
     >
       <div
-        className="bg-white/20 p-6 rounded-xl text-white shadow-lg"
+        className="flex flex-col items-center justify-between w-1/3 bg-black-white-10 backdrop-blur-md p-6 rounded-xl shadow-lg"
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
       >
         {children}
         <button
-          className="mt-4 px-4 py-2 bg-red-500 rounded-lg hover:bg-red-600"
+          className="mt-4 px-4 py-2 rounded-lg text-red-500 hover:bg-red-500 hover:text-white"
           onClick={onClose} // Close button
         >
           Close
