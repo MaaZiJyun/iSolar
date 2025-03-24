@@ -3,11 +3,17 @@
 ## What is iSolar
 
 ![This is an image](screenshots/001.png)
+
 LifeStar is a unique application designed to inspire self-improvement, self-monitoring, and self-reflection by offering a profound perspective on the finite nature of human life.
+
 ![This is an image](screenshots/002.png)
+
 Unlike traditional time or schedule management apps, iSolar doesn’t focus on organizing your tasks or managing your daily routine. Instead, it serves as a gentle but powerful reminder of life’s fleeting nature, encouraging users to live more intentionally and meaningfully.
+
 ![This is an image](screenshots/003.png)
+
 Through a metaphorical representation of human life as a star, the app visually and numerically illustrates how much of your life is behind you and how much remains ahead. Just as a star shines brightly before it fades, LifeStar motivates users to make the most of their remaining time and reflect on how they are living.
+
 ![This is an image](screenshots/004.png)
 
 ## Who Is It For?
