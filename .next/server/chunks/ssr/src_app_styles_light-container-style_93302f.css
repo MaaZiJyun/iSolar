@@ -1,0 +1,98 @@
+/* [project]/src/app/styles/light-container-style.css [app-client] (css) */
+@keyframes openingColorChange {
+  0% {
+    background-color: #34bfa3;
+  }
+
+  25% {
+    background-color: #fc0;
+  }
+
+  50% {
+    background-color: #ff677d;
+  }
+
+  75% {
+    background-color: #fc0;
+  }
+
+  100% {
+    background-color: #34bfa3;
+  }
+}
+
+.opening-bg {
+  animation: 3s linear infinite openingColorChange;
+}
+
+@keyframes rainbow {
+  0% {
+    color: red;
+  }
+
+  16% {
+    color: #ff9a00;
+  }
+
+  33% {
+    color: #d0de21;
+  }
+
+  50% {
+    color: #4fdc4a;
+  }
+
+  66% {
+    color: #3fdad8;
+  }
+
+  83% {
+    color: #2b65e6;
+  }
+
+  100% {
+    color: #8a2be2;
+  }
+}
+
+.icon-rainbow {
+  animation: 1.5s linear infinite rainbow;
+}
+
+@keyframes rainbow-border {
+  0% {
+    border: 2px solid red;
+  }
+
+  16% {
+    border: 2px solid #ff9a00;
+  }
+
+  33% {
+    border: 2px solid #d0de21;
+  }
+
+  50% {
+    border: 2px solid #4fdc4a;
+  }
+
+  66% {
+    border: 2px solid #3fdad8;
+  }
+
+  83% {
+    border: 2px solid #2b65e6;
+  }
+
+  100% {
+    border: 2px solid #8a2be2;
+  }
+}
+
+.border-rainbow {
+  animation: 1.5s linear infinite rainbow-border;
+  border-radius: 12px;
+}
+
+
+/*# sourceMappingURL=src_app_styles_light-container-style_93302f.css.map*/

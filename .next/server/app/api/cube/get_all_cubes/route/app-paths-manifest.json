@@ -1,0 +1,3 @@
+{
+  "/api/cube/get_all_cubes/route": "app/api/cube/get_all_cubes/route.js"
+}

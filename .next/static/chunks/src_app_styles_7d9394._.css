@@ -1,0 +1,93 @@
+/* [project]/src/app/styles/star-styles.css [app-client] (css) */
+@keyframes breath {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.star {
+  transition: background-color 5s, width 5s, height 5s;
+  border-radius: 50%;
+  position: relative;
+  display: inline-block;
+  animation: 10s linear infinite breath;
+}
+
+.emoji {
+  transition: font-size 10s;
+}
+
+.glow {
+  position: absolute;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: opacity 5s, background-color 7s, width 10s, height 10s;
+}
+
+
+/* [project]/src/app/styles/solar-system.css [app-client] (css) */
+.space {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.sun {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.orbit {
+  position: absolute;
+  border: 1px solid var(--foreground);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: linear infinite rotate;
+}
+
+.planet {
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+
+.orbit:hover {
+  animation-play-state: paused;
+}
+
+.planet:hover {
+  animation-play-state: paused;
+}
+
+@keyframes rotate {
+  from {
+    transform: translate(-50%, -50%)rotate(0);
+  }
+
+  to {
+    transform: translate(-50%, -50%)rotate(360deg);
+  }
+}
+
+
+/*# sourceMappingURL=src_app_styles_7d9394._.css.map*/
