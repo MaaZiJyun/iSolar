@@ -1,3 +1,13 @@
+# iSolar: A New Way to Motivate Your Life by Visualization of Your Lifespan
+
+![This is an image](screenshots/001.png)
+
+![This is an image](screenshots/002.png)
+
+![This is an image](screenshots/003.png)
+
+![This is an image](screenshots/004.png)
+
 ## Getting Started
 
 Firstly, download and install MySQL
