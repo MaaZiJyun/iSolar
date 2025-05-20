@@ -1,0 +1,17 @@
+.wave-svg {
+  width: 200%; /* 两个周期宽度 */
+  animation: waveMove 4s linear infinite;
+}
+
+.wave-svg-second {
+  animation-delay: -2s; /* 半周期错开动画 */
+}
+
+@keyframes waveMove {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}

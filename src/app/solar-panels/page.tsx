@@ -20,7 +20,7 @@ const SolarPanels: React.FC = () => {
   const [birthDate, setBirthDate] = useState<string>("2025-02-01");
   const [currentDate] = useState<string>(dayjs().format("YYYY-MM-DD"));
   const [selectedDate] = useState<string>(currentDate);
-  const [processing, setProcessing] = useState(0); 
+  const [processing, setProcessing] = useState(0);
 
   // useEffect(() => {
   //   const fetchUserData = () => {
@@ -201,15 +201,13 @@ const SolarPanels: React.FC = () => {
 
   // Loading screen
   if (isLoading || userData === undefined) {
-    return (
-       <LoadingPage processing={processing} />
-    );
+    return <LoadingPage processing={processing} />;
   } else
     return (
       <div className="flex">
         <StarBackground />
         <div className="w-full h-screen overflow-y-auto">
-          <div className="grid grid-cols-10">
+          <div className="grid grid-cols-7 p-24">
             {dates.map((date, index) => {
               const key = calculateLifeDay(birthDate, date);
               return (
@@ -224,12 +222,12 @@ const SolarPanels: React.FC = () => {
           </div>
           <div className="h-12"></div>
         </div>
-        <div
+        {/* <div
           className="absolute flex w-full items-center justify-center bottom-0 bg-yellow-500 hover:bg-white hover:text-yellow-500 hover:cursor-pointer"
           onClick={focusDate}
         >
           <SunIcon className="h-10 w-10" />
-        </div>
+        </div> */}
       </div>
     );
 };

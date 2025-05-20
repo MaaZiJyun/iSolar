@@ -65,23 +65,6 @@ const ReadOnlyTaskList: React.FC<ReadOnlyTaskListProps> = ({ user, date }) => {
     }
   };
 
-  const handleTaskChange = (index: number, updatedTask: Partial<TaskClass>) => {
-    const updatedTasks = [...taskList];
-    const existingTask = updatedTasks[index];
-    updatedTasks[index] = new TaskClass(
-      existingTask.id,
-      existingTask.userId,
-      "name" in updatedTask ? updatedTask.name! : existingTask.name,
-      "date" in updatedTask ? updatedTask.date! : existingTask.date,
-      "remarks" in updatedTask ? updatedTask.remarks! : existingTask.remarks,
-      "completion" in updatedTask
-        ? updatedTask.completion!
-        : existingTask.completion,
-      "mark" in updatedTask ? updatedTask.mark! : existingTask.mark
-    );
-    setTaskList(updatedTasks);
-  };
-
   return (
     <div className=" h-96 overflow-y-auto">
       {isLoading ? (
