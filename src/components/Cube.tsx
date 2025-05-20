@@ -4,11 +4,10 @@ import { LightBulbIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import dayjs from "dayjs";
 import "@/app/styles/light-container-style.css";
 import CubeClass from "@/modules/CubeClass";
-import EditableTaskList from "./EditableTaskList";
 import UserClass from "@/modules/UserClass";
-import ReadOnlyTaskList from "./ReadOnlyTaskList";
 import { useRouter } from "next/navigation";
 import "@/app/styles/cube.css";
+import TaskList from "./TaskList";
 
 interface CubeProps {
   order: number;
@@ -71,41 +70,43 @@ const Cube: React.FC<CubeProps> = ({ order, user, cube }) => {
         onMouseLeave={() => setEmojiIndex(0)}
       >
         {/* Water layer */}
-        <div
-          className="absolute w-full"
-          style={{ height: "200px" /*容器高度任意*/ }}
-        >
-          {/* 波浪 */}
-          <svg
-            className="absolute wave-svg wave-svg-second left-0 w-full"
-            viewBox="0 0 1200 100"
-            preserveAspectRatio="none"
-            style={{
-              pointerEvents: "none",
-              bottom: `${cube.percentage}%`, // 底边距离容器底部距离为percentage
-              height: "40px", // 波浪高度固定或可调
-              overflow: "visible",
-            }}
-          >
-            <path
-              d="M0 50 C 150 70 350 30 600 50 C 850 70 1050 30 1200 50 L1200 100 L0 100 Z"
-              fill={getWaveColorByPercentage(cube.percentage)}
-              style={{ opacity: 0.4 }}
-            />
-          </svg>
-
-          {/* 填充颜色的div，占满从底部到波浪底边的剩余高度 */}
+        {cube.id !== -1 && (
           <div
-            className="absolute left-0 w-full"
-            style={{
-              bottom: 0,
-              height: `${cube.percentage}%`,
-              backgroundColor: getWaveColorByPercentage(cube.percentage),
-              opacity: 0.4,
-              pointerEvents: "none",
-            }}
-          />
-        </div>
+            className="absolute w-full"
+            style={{ height: "200px" /*容器高度任意*/ }}
+          >
+            {/* 波浪 */}
+            <svg
+              className="absolute wave-svg wave-svg-second left-0 w-full"
+              viewBox="0 0 1200 100"
+              preserveAspectRatio="none"
+              style={{
+                pointerEvents: "none",
+                bottom: `${cube.percentage}%`, // 底边距离容器底部距离为percentage
+                height: "40px", // 波浪高度固定或可调
+                overflow: "visible",
+              }}
+            >
+              <path
+                d="M0 50 C 150 70 350 30 600 50 C 850 70 1050 30 1200 50 L1200 100 L0 100 Z"
+                fill={getWaveColorByPercentage(cube.percentage)}
+                style={{ opacity: 0.4 }}
+              />
+            </svg>
+
+            {/* 填充颜色的div，占满从底部到波浪底边的剩余高度 */}
+            <div
+              className="absolute left-0 bottom-0 w-full"
+              style={{
+                bottom: 0,
+                height: `${cube.percentage}%`,
+                backgroundColor: getWaveColorByPercentage(cube.percentage),
+                opacity: 0.4,
+                pointerEvents: "none",
+              }}
+            />
+          </div>
+        )}
 
         <div
           className={`relative z-10 flex flex-col items-center ${
@@ -115,7 +116,6 @@ const Cube: React.FC<CubeProps> = ({ order, user, cube }) => {
           {isToday ? (
             <>
               <p className="text-3xl mt-6">{emoji[emojiIndex]}</p>
-              <p className="text-xs">TODAY</p>
             </>
           ) : cube.id === -1 ? (
             <>
@@ -162,9 +162,11 @@ const Cube: React.FC<CubeProps> = ({ order, user, cube }) => {
               </div>
 
               {isToday ? (
-                <EditableTaskList user={user} />
+                // 编辑模式
+                <TaskList user={user} editable={true} />
               ) : (
-                <ReadOnlyTaskList user={user} date={cube.date} />
+                // 只读模式
+                <TaskList user={user} date={cube.date} editable={false} />
               )}
 
               <div className="relative bg-black-white-50 rounded-lg h-6 m-2">

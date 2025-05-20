@@ -6,32 +6,36 @@ import {
   Battery0Icon,
   Battery100Icon,
   Battery50Icon,
-  CheckCircleIcon,
-  CheckIcon,
-  ClockIcon,
   PencilSquareIcon,
   PlusIcon,
   TrashIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline"; // Ensure you have Heroicons installed
+} from "@heroicons/react/24/outline";
 import dayjs from "dayjs";
 import TaskClass from "@/modules/TaskClass";
 import UserClass from "@/modules/UserClass";
 
-interface EditableTaskListProps {
+interface TaskListProps {
   user: UserClass;
+  date?: string;
+  editable?: boolean;
+  showHeader?: boolean;
+  height?: string;
 }
 
-const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
-  const [isLoading, setIsLoading] = useState(true); // Loading state
-  const [isUpdating, setUpdating] = useState(false); // Loading state
+const TaskList: React.FC<TaskListProps> = ({
+  user,
+  date = dayjs().format("YYYY-MM-DD"),
+  editable = false,
+  showHeader = true,
+  height = "h-96",
+}) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isUpdating, setUpdating] = useState(false);
   const [taskList, setTaskList] = useState<TaskClass[]>([]);
   const [newTaskName, setNewTaskName] = useState<string>("");
-  const [newTaskDate, setNewTaskDate] = useState<string>(
-    dayjs().format("YYYY-MM-DD")
-  );
+  const [newTaskDate, setNewTaskDate] = useState<string>(date);
   const [newTaskRemarks, setNewTaskRemarks] = useState<string>("");
-  const [editIndex, setEditIndex] = useState<number | null>(null); // Track which task is in edit mode
+  const [editIndex, setEditIndex] = useState<number | null>(null);
 
   interface NewTask {
     name: string;
@@ -72,7 +76,6 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
       })
     );
     const updateTasks: TaskClass[] = [...taskList, ...newTasks];
-    console.log(updateTasks);
     setTaskList(updateTasks);
     setIsLoading(false);
   };
@@ -84,50 +87,36 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
       const updatedTasks = [...taskList, newTask];
       setTaskList(updatedTasks);
     }
-    // Reset the form inputs for the new task
     resetNewTaskInputs();
     setIsLoading(false);
   };
 
   const getTasksByDateFromDB = async (date: string, userId: string) => {
     try {
-      // Construct the query parameters
-      const queryParams = new URLSearchParams({
-        date, // Task date
-        userId, // User ID
-      });
-
-      // Make the GET request
+      const queryParams = new URLSearchParams({ date, userId });
       const res = await fetch(`/api/tasks/get_task?${queryParams.toString()}`, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       });
 
-      // Handle non-OK responses
       if (!res.ok) {
         const errorResponse = await res.json();
         throw new Error(errorResponse.error || "Failed to fetch tasks");
       }
 
-      // Parse and return the results
       const data = await res.json();
-      // console.log(data);
-      // Convert each task object into an instance of TaskClass
       const tasks = data.map((task: any) => {
         return new TaskClass(
-          task.id, // Task ID
-          task.user_id, // User ID
-          task.name, // Task name
-          task.date, // Task date
-          task.remarks, // Remarks
-          task.completion, // Completion percentage
-          task.mark // Mark
+          task.id,
+          task.user_id,
+          task.name,
+          task.date,
+          task.remarks,
+          task.completion,
+          task.mark
         );
       });
 
-      // Set the task list state with the TaskClass instances
       setTaskList(tasks);
       setIsLoading(false);
     } catch (error) {
@@ -138,26 +127,20 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
 
   const deleteTaskByIdFromDB = async (taskId: number, userId: string) => {
     try {
-      // Build the query parameters
       const params = new URLSearchParams();
       params.append("taskId", taskId.toString());
       params.append("userId", userId);
 
-      // Send DELETE request to the backend
       const res = await fetch(`/api/tasks/delete_task?${params.toString()}`, {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       });
 
-      // Throw an error if the response is not OK
       if (!res.ok) {
         const errorResponse = await res.json();
         throw new Error(errorResponse.error || "Failed to delete task");
       }
 
-      // Return the success message
       const data = await res.json();
       return data;
     } catch (error) {
@@ -166,10 +149,7 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
     }
   };
 
-  const handleTaskChange = (
-    taskId: number,
-    updatedTask: Partial<TaskClass>
-  ) => {
+  const handleTaskChange = (taskId: number, updatedTask: Partial<TaskClass>) => {
     setUpdating(true);
     const index = taskList.findIndex((task) => task.id === taskId);
     const updatedTasks = [...taskList];
@@ -180,9 +160,7 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
       "name" in updatedTask ? updatedTask.name! : existingTask.name,
       "date" in updatedTask ? updatedTask.date! : existingTask.date,
       "remarks" in updatedTask ? updatedTask.remarks! : existingTask.remarks,
-      "completion" in updatedTask
-        ? updatedTask.completion!
-        : existingTask.completion,
+      "completion" in updatedTask ? updatedTask.completion! : existingTask.completion,
       "mark" in updatedTask ? updatedTask.mark! : existingTask.mark
     );
     updateTaskByIdFromDB(updatedTasks[index]);
@@ -193,34 +171,25 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
     newTaskName: string,
     newTaskRemarks: string
   ): Promise<TaskClass | undefined> => {
-    // Create a new task instance with a temporary placeholder ID (-1)
     const newTask = new TaskClass(
-      -1, // Placeholder ID (will be updated after backend response)
-      user.id, // User ID from state or props
-      newTaskName, // Name of the new task
-      newTaskDate, // Date of the new task
-      newTaskRemarks, // Remarks for the new task
-      "0%", // Default completion status
-      "Failure" // Default mark (empty for initial creation)
+      -1,
+      user.id,
+      newTaskName,
+      newTaskDate,
+      newTaskRemarks,
+      "0%",
+      "Failure"
     );
 
     try {
-      // Make an API call to save the task on the backend
       const res = await fetch("/api/tasks/add_task", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newTask),
       });
 
-      // Assuming the backend sends back the new task ID in the response
       const data = await res.json();
-
-      // Update the task object with the real ID from the backend
       newTask.id = data.taskId;
-
-      // console.log("Task added successfully:", newTask);
       return newTask;
     } catch (error) {
       console.error("Error adding task:", error);
@@ -230,19 +199,14 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
 
   const updateTaskByIdFromDB = async (updatedTask: TaskClass) => {
     try {
-      // Send the PUT request to the update API
       const response = await fetch("/api/tasks/update_task", {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedTask),
       });
-      // Parse the response
       const data = await response.json();
 
       if (!response.ok) {
-        // Handle error from the API if the update wasn't successful
         console.error("Error updating task:", data.error);
         return;
       }
@@ -254,98 +218,96 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
 
   const resetNewTaskInputs = () => {
     setNewTaskName("");
-    setNewTaskDate(dayjs().format("YYYY-MM-DD"));
     setNewTaskRemarks("");
   };
 
   const clickDelete = (taskId: number) => {
     deleteTaskByIdFromDB(taskId, user.id);
-    // const updatedTasks = taskList.filter((_, i) => i !== index);
     const updatedTasks = taskList.filter((task) => task.id !== taskId);
-
     setTaskList(updatedTasks);
   };
 
   const toggleEdit = (index: number) => {
     if (editIndex === index) {
-      setEditIndex(null); // Toggle off edit mode
+      setEditIndex(null);
     } else {
-      setEditIndex(index); // Set the task as editable
+      setEditIndex(index);
     }
   };
 
   return (
     <div className="my-6 space-y-4">
-      <div className="flex items-center justify-center space-x-2">
-        <div className="flex-grow">
-          <label htmlFor="newTaskName" className="text-sm">
-            Task Title
-          </label>
-          <input
-            type="text"
-            value={newTaskName}
-            onChange={(e) => setNewTaskName(e.target.value)}
-            // placeholder="Task Name"
-            className="bg-black-white-50 mr-2 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          />
-        </div>
-        <div className="flex-grow">
-          <label htmlFor="newTaskName" className="text-sm">
-            Remarks
-          </label>
-          <input
-            type="text"
-            value={newTaskRemarks}
-            onChange={(e) => setNewTaskRemarks(e.target.value)}
-            // placeholder="Remarks"
-            className="bg-black-white-50 mr-2 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          />
-        </div>
-        <div className="flex items-center justify-center">
-          {isLoading ? (
-            <>
-              <div className="p-2 rounded text-gray-300">
-                <PlusIcon className="h-6 w-6" />
-                <label htmlFor="newTaskName" className="text-sm">
-                  Add
-                </label>
-              </div>
-              {taskList.length < 1 && (
+      {editable && showHeader && (
+        <div className="flex items-center justify-center space-x-2">
+          <div className="flex-grow">
+            <label htmlFor="newTaskName" className="text-sm">
+              Task Title
+            </label>
+            <input
+              type="text"
+              value={newTaskName}
+              onChange={(e) => setNewTaskName(e.target.value)}
+              className="bg-black-white-50 mr-2 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            />
+          </div>
+          <div className="flex-grow">
+            <label htmlFor="newTaskName" className="text-sm">
+              Remarks
+            </label>
+            <input
+              type="text"
+              value={newTaskRemarks}
+              onChange={(e) => setNewTaskRemarks(e.target.value)}
+              className="bg-black-white-50 mr-2 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            />
+          </div>
+          <div className="flex items-center justify-center">
+            {isLoading ? (
+              <>
                 <div className="p-2 rounded text-gray-300">
-                  <ArrowDownTrayIcon className="h-6 w-6" />
+                  <PlusIcon className="h-6 w-6" />
                   <label htmlFor="newTaskName" className="text-sm">
-                    Import
+                    Add
                   </label>
                 </div>
-              )}
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() => submitNewTaskList(newTaskName, newTaskRemarks)}
-                className="p-2 rounded"
-              >
-                <PlusIcon className="h-6 w-6" />
-                <label htmlFor="newTaskName" className="text-sm">
-                  Add
-                </label>
-              </button>
-              {taskList.length < 1 && (
+                {taskList.length < 1 && (
+                  <div className="p-2 rounded text-gray-300">
+                    <ArrowDownTrayIcon className="h-6 w-6" />
+                    <label htmlFor="newTaskName" className="text-sm">
+                      Import
+                    </label>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
                 <button
-                  onClick={() => importFrequentTaskList(dailyTaskList)}
+                  onClick={() => submitNewTaskList(newTaskName, newTaskRemarks)}
                   className="p-2 rounded"
                 >
-                  <ArrowDownTrayIcon className="h-6 w-6" />
+                  <PlusIcon className="h-6 w-6" />
                   <label htmlFor="newTaskName" className="text-sm">
-                    Import
+                    Add
                   </label>
                 </button>
-              )}
-            </>
-          )}
+                {taskList.length < 1 && (
+                  <button
+                    onClick={() => importFrequentTaskList(dailyTaskList)}
+                    className="p-2 rounded"
+                  >
+                    <ArrowDownTrayIcon className="h-6 w-6" />
+                    <label htmlFor="newTaskName" className="text-sm">
+                      Import
+                    </label>
+                  </button>
+                )}
+              </>
+            )}
+          </div>
         </div>
-      </div>
-      <div className=" h-96 overflow-y-auto">
+      )}
+
+      <div className={`${height} overflow-y-auto`}>
         {isLoading ? (
           <div className="flex w-full h-full items-center justify-center text-lg">
             Loading
@@ -354,7 +316,7 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
           <>
             {taskList.length < 1 ? (
               <div className="flex w-full h-full items-center justify-center text-lg">
-                Haven't plan anything yet UwU
+                {editable ? "Haven't plan anything yet UwU" : "There is nothing left UwU"}
               </div>
             ) : (
               <table className="w-full border-b">
@@ -372,53 +334,48 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
                     <th className="text-left px-4 py-2 font-bold">
                       <span className="m-2 block">Mark</span>
                     </th>
-                    <th className="text-left px-4 py-2 font-bold">
-                      <span className="m-2 block">Actions</span>
-                    </th>
+                    {editable && (
+                      <th className="text-left px-4 py-2 font-bold">
+                        <span className="m-2 block">Actions</span>
+                      </th>
+                    )}
                   </tr>
                 </thead>
 
                 <tbody>
                   {taskList.map((task) => (
-                    <tr key={task.id} className="hover:bg-white/15">
+                    <tr key={task.id} className={`hover:bg-white/15 ${!editable && task.mark === 'Failure' ? 'text-red-500' : ''}`}>
                       <td className="px-4 py-2">
-                        {editIndex === task.id ? (
+                        {editable && editIndex === task.id ? (
                           <input
                             type="text"
                             value={task.name}
                             onChange={(e) =>
-                              handleTaskChange(task.id, {
-                                name: e.target.value,
-                              })
+                              handleTaskChange(task.id, { name: e.target.value })
                             }
-                            className="w-full bg-transparent m-2 block" // Set input background to transparent
+                            className="w-full bg-transparent m-2 block"
                           />
                         ) : (
                           <span className="m-2 block">{task.name}</span>
                         )}
                       </td>
-                      <td className="px-4 py-2 text-xs ">
-                        {editIndex === task.id ? (
+                      <td className="px-4 py-2 text-xs">
+                        {editable && editIndex === task.id ? (
                           <input
                             type="text"
                             value={task.remarks ?? ""}
                             onChange={(e) =>
-                              handleTaskChange(task.id, {
-                                remarks: e.target.value,
-                              })
+                              handleTaskChange(task.id, { remarks: e.target.value })
                             }
-                            className="w-full bg-transparent m-2 block" // Set input background to transparent
+                            className="w-full bg-transparent m-2 block"
                           />
                         ) : (
-                          <span className="m-2 block">
-                            {task.remarks}
-                          </span>
+                          <span className="m-2 block">{task.remarks}</span>
                         )}
                       </td>
-                      {/* Task Completion Bar */}
 
                       <td className="px-4 py-2">
-                        {editIndex === task.id ? (
+                        {editable && editIndex === task.id ? (
                           <div className="flex w-full space-x-2 m-2">
                             <button
                               className="hover:text-red-500"
@@ -432,9 +389,7 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
                             <button
                               className="hover:text-yellow-500"
                               onClick={() => {
-                                handleTaskChange(task.id, {
-                                  completion: "50%",
-                                });
+                                handleTaskChange(task.id, { completion: "50%" });
                                 setEditIndex(null);
                               }}
                             >
@@ -443,9 +398,7 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
                             <button
                               className="hover:text-green-500"
                               onClick={() => {
-                                handleTaskChange(task.id, {
-                                  completion: "100%",
-                                });
+                                handleTaskChange(task.id, { completion: "100%" });
                                 setEditIndex(null);
                               }}
                             >
@@ -454,56 +407,50 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
                           </div>
                         ) : (
                           <div className="relative bg-black-white-50 rounded-lg h-6 m-2 block">
-                            {/* Progress Bar Filler */}
                             <div
                               className="h-6 bg-yellow-500 rounded-lg transition-all duration-300"
-                              style={{ width: `${task.completion}` }} // Added percentage symbol
+                              style={{ width: `${task.completion}` }}
                             ></div>
-
-                            {/* Progress Text Overlay */}
                             <div className="absolute inset-0 flex items-center justify-center">
-                              <span className="font-bold">
-                                {task.completion}
-                              </span>
+                              <span className="font-bold">{task.completion}</span>
                             </div>
                           </div>
                         )}
                       </td>
                       <td className="px-4 py-2">
                         <span className="m-2 block">
-                          {task.mark === "Failure" ? "None" : task.mark}
+                          {editable ? (task.mark === "Failure" ? "None" : task.mark) : task.mark}
                         </span>
                       </td>
-                      <td className="px-4 py-2">
-                        {editIndex === task.id ? (
-                          <>
-                            {isUpdating ? (
-                              <>
+                      {editable && (
+                        <td className="px-4 py-2">
+                          {editIndex === task.id ? (
+                            <>
+                              {isUpdating ? (
                                 <div className="flex space-x-2">
                                   <ArrowUturnLeftIcon className="h-6 w-6" />
-
                                   <TrashIcon className="h-6 w-6" />
                                 </div>
-                              </>
-                            ) : (
-                              <div className="flex space-x-2 m-2 block">
-                                <button onClick={() => toggleEdit(task.id)}>
-                                  <ArrowUturnLeftIcon className="h-6 w-6 text-blue-500" />
-                                </button>
-                                <button onClick={() => clickDelete(task.id)}>
-                                  <TrashIcon className="h-6 w-6 text-red-500" />
-                                </button>
-                              </div>
-                            )}
-                          </>
-                        ) : (
-                          <div className="m-2 block">
-                            <button onClick={() => toggleEdit(task.id)}>
-                              <PencilSquareIcon className="h-6 w-6" />
-                            </button>
-                          </div>
-                        )}
-                      </td>
+                              ) : (
+                                <div className="flex space-x-2 m-2 block">
+                                  <button onClick={() => toggleEdit(task.id)}>
+                                    <ArrowUturnLeftIcon className="h-6 w-6 text-blue-500" />
+                                  </button>
+                                  <button onClick={() => clickDelete(task.id)}>
+                                    <TrashIcon className="h-6 w-6 text-red-500" />
+                                  </button>
+                                </div>
+                              )}
+                            </>
+                          ) : (
+                            <div className="m-2 block">
+                              <button onClick={() => toggleEdit(task.id)}>
+                                <PencilSquareIcon className="h-6 w-6" />
+                              </button>
+                            </div>
+                          )}
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -516,4 +463,4 @@ const EditableTaskList: React.FC<EditableTaskListProps> = ({ user }) => {
   );
 };
 
-export default EditableTaskList;
+export default TaskList;
