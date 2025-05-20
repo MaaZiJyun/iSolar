@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["file:///Users/domuki/Documents/Project/Selfware/src/app/styles/star-styles.css"],"sourcesContent":["@keyframes breath {\n  0% {\n    transform: scale(1);\n  }\n\n  /* Red */\n  50% {\n    transform: scale(1.2);\n  }\n\n  /* Orange */\n  100% {\n    transform: scale(1);\n  }\n\n  /* Orange */\n}\n\n.star {\n  transition: background-color 5s ease, width 5s ease, height 5s ease;\n  /* Smooth transition for color and size */\n  border-radius: 50%;\n  /* Make it circular */\n  position: relative;\n  /* To handle glow effect */\n  display: inline-block;\n  /* Allow size adjustments */\n  animation: breath 10s linear infinite;\n}\n\n.emoji {\n  transition: font-size 10s ease\n}\n\n.glow {\n  position: absolute;\n  border-radius: 50%;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  transition: opacity 5s ease, background-color 7s ease, width 10s ease, height 10s ease;\n  /* Smooth transition for glow */\n}"],"names":[],"mappings":"AAAA;;;;;;;;;;;;;;AAkBA;;;;;;;;AAYA;;;;AAIA"}},
-    {"offset": {"line": 35, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
-}
